@@ -91,6 +91,7 @@ public class EmojIconActions implements View.OnFocusChangeListener {
     this.context = ctx;
     this.rootView = rootView;
     this.popup = new EmojiconsPopup(rootView, ctx, useSystemEmoji);
+    initListeners();
   }
 
   /**
@@ -210,9 +211,6 @@ public class EmojIconActions implements View.OnFocusChangeListener {
 
         @Override
         public void onClick(View v) {
-          if (emojiconEditText == null) {
-            emojiconEditText = emojiconEditTextList.get(0);
-          }
           togglePopupVisibility();
         }
       });
@@ -228,6 +226,9 @@ public class EmojIconActions implements View.OnFocusChangeListener {
   }
 
   public void showPopup() {
+    if (emojiconEditText == null) {
+      emojiconEditText = emojiconEditTextList.get(0);
+    }
     if (popup.isKeyBoardOpen()) {
       popup.showAtBottom();
       changeEmojiKeyboardIcon(emojiButton, KeyBoardIcon);
