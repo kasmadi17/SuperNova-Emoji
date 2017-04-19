@@ -38,240 +38,240 @@ import hani.momanii.supernova_emoji_library.emoji.Emojicon;
  */
 public class EmojIconActions implements View.OnFocusChangeListener {
 
-  private boolean useSystemEmoji = false;
-  private EmojiconsPopup popup;
-  private Context context;
-  private View rootView;
-  private ImageView emojiButton;
-  private int KeyBoardIcon = R.drawable.ic_action_keyboard;
-  private int SmileyIcons = R.drawable.smiley;
-  private KeyboardListener keyboardListener;
-  private List<EmojiconEditText> emojiconEditTextList = new ArrayList<>();
-  private EmojiconEditText emojiconEditText;
+    private boolean useSystemEmoji = false;
+    private EmojiconsPopup popup;
+    private Context context;
+    private View rootView;
+    private ImageView emojiButton;
+    private int KeyBoardIcon = R.drawable.ic_action_keyboard;
+    private int SmileyIcons = R.drawable.smiley;
+    private KeyboardListener keyboardListener;
+    private List<EmojiconEditText> emojiconEditTextList = new ArrayList<>();
+    private EmojiconEditText emojiconEditText;
 
 
-  /**
-   * Constructor
-   *
-   * @param ctx              The context of current activity.
-   * @param rootView         The top most layout in your view hierarchy. The difference of this
-   *                         view and the screen height will be used to calculate the keyboard
-   *                         height.
-   * @param emojiconEditText The Id of EditText.
-   * @param emojiButton      The Id of ImageButton used to open Emoji
-   */
-  public EmojIconActions(Context ctx, View rootView, EmojiconEditText emojiconEditText, ImageView emojiButton) {
-    this.emojiButton = emojiButton;
-    this.context = ctx;
-    this.rootView = rootView;
-    addEmojiconEditTextList(emojiconEditText);
-    this.popup = new EmojiconsPopup(rootView, ctx, useSystemEmoji);
-    initListeners();
-  }
-
-  public void addEmojiconEditTextList(EmojiconEditText... emojiconEditText) {
-    Collections.addAll(emojiconEditTextList, emojiconEditText);
-    for (EmojiconEditText editText : emojiconEditText) {
-      editText.setOnFocusChangeListener(this);
+    /**
+     * Constructor
+     *
+     * @param ctx              The context of current activity.
+     * @param rootView         The top most layout in your view hierarchy. The difference of this
+     *                         view and the screen height will be used to calculate the keyboard
+     *                         height.
+     * @param emojiconEditText The Id of EditText.
+     * @param emojiButton      The Id of ImageButton used to open Emoji
+     */
+    public EmojIconActions(Context ctx, View rootView, EmojiconEditText emojiconEditText, ImageView emojiButton) {
+        this.emojiButton = emojiButton;
+        this.context = ctx;
+        this.rootView = rootView;
+        addEmojiconEditTextList(emojiconEditText);
+        this.popup = new EmojiconsPopup(rootView, ctx, useSystemEmoji);
+        initListeners();
     }
-  }
 
-
-  /**
-   * Constructor
-   *
-   * @param ctx              The context of current activity.
-   * @param rootView         The top most layout in your view hierarchy. The difference of this
-   *                         view and the screen height will be used to calculate the keyboard
-   *                         height.
-   * @param emojiconEditText The Id of EditText.
-   */
-  public EmojIconActions(Context ctx, View rootView, EmojiconEditText emojiconEditText) {
-    addEmojiconEditTextList(emojiconEditText);
-    this.context = ctx;
-    this.rootView = rootView;
-    this.popup = new EmojiconsPopup(rootView, ctx, useSystemEmoji);
-    initListeners();
-  }
-
-  /**
-   * @param emojiButton The Id of ImageButton used to open Emoji
-   */
-  public void setEmojiButton(ImageView emojiButton) {
-    this.emojiButton = emojiButton;
-    initEmojiButtonListener();
-  }
-
-  /**
-   * @param iconPressedColor The color of icons on tab
-   * @param tabsColor        The color of tabs background
-   * @param backgroundColor  The color of emoji background
-   */
-  public void setColors(int iconPressedColor, int tabsColor, int backgroundColor) {
-    this.popup.setColors(iconPressedColor, tabsColor, backgroundColor);
-  }
-
-  public void setIconsIds(int keyboardIcon, int smileyIcon) {
-    this.KeyBoardIcon = keyboardIcon;
-    this.SmileyIcons = smileyIcon;
-  }
-
-  public void setUseSystemEmoji(boolean useSystemEmoji) {
-    this.useSystemEmoji = useSystemEmoji;
-    for (EmojiconEditText editText : emojiconEditTextList) {
-      editText.setUseSystemDefault(useSystemEmoji);
+    public void addEmojiconEditTextList(EmojiconEditText... emojiconEditText) {
+        Collections.addAll(emojiconEditTextList, emojiconEditText);
+        for (EmojiconEditText editText : emojiconEditText) {
+            editText.setOnFocusChangeListener(this);
+        }
     }
-    refresh();
-  }
 
 
-  private void refresh() {
-    popup.updateUseSystemDefault(useSystemEmoji);
-  }
-
-  public void initListeners() {
-    if (emojiconEditText == null) {
-      emojiconEditText = emojiconEditTextList.get(0);
+    /**
+     * Constructor
+     *
+     * @param ctx              The context of current activity.
+     * @param rootView         The top most layout in your view hierarchy. The difference of this
+     *                         view and the screen height will be used to calculate the keyboard
+     *                         height.
+     * @param emojiconEditText The Id of EditText.
+     */
+    public EmojIconActions(Context ctx, View rootView, EmojiconEditText emojiconEditText) {
+        addEmojiconEditTextList(emojiconEditText);
+        this.context = ctx;
+        this.rootView = rootView;
+        this.popup = new EmojiconsPopup(rootView, ctx, useSystemEmoji);
+        initListeners();
     }
-    //Will automatically set size according to the soft keyboard size
-    popup.setSizeForSoftKeyboard();
 
-    //If the emoji popup is dismissed, change emojiButton to smiley icon
-    popup.setOnDismissListener(new PopupWindow.OnDismissListener() {
+    /**
+     * @param emojiButton The Id of ImageButton used to open Emoji
+     */
+    public void setEmojiButton(ImageView emojiButton) {
+        this.emojiButton = emojiButton;
+        initEmojiButtonListener();
+    }
 
-      @Override
-      public void onDismiss() {
-        changeEmojiKeyboardIcon(emojiButton, SmileyIcons);
-      }
-    });
+    /**
+     * @param iconPressedColor The color of icons on tab
+     * @param tabsColor        The color of tabs background
+     * @param backgroundColor  The color of emoji background
+     */
+    public void setColors(int iconPressedColor, int tabsColor, int backgroundColor) {
+        this.popup.setColors(iconPressedColor, tabsColor, backgroundColor);
+    }
 
-    //If the text keyboard closes, also dismiss the emoji popup
-    popup.setOnSoftKeyboardOpenCloseListener(new EmojiconsPopup.OnSoftKeyboardOpenCloseListener() {
+    public void setIconsIds(int keyboardIcon, int smileyIcon) {
+        this.KeyBoardIcon = keyboardIcon;
+        this.SmileyIcons = smileyIcon;
+    }
 
-      @Override
-      public void onKeyboardOpen(int keyBoardHeight) {
-        if (keyboardListener != null) {
-          keyboardListener.onKeyboardOpen();
+    public void setUseSystemEmoji(boolean useSystemEmoji) {
+        this.useSystemEmoji = useSystemEmoji;
+        for (EmojiconEditText editText : emojiconEditTextList) {
+            editText.setUseSystemDefault(useSystemEmoji);
         }
-      }
+        refresh();
+    }
 
-      @Override
-      public void onKeyboardClose() {
-        if (keyboardListener != null) {
-          keyboardListener.onKeyboardClose();
+
+    private void refresh() {
+        popup.updateUseSystemDefault(useSystemEmoji);
+    }
+
+    public void initListeners() {
+        if (emojiconEditText == null) {
+            emojiconEditText = emojiconEditTextList.get(0);
         }
-        if (popup.isShowing()) {
-          popup.dismiss();
+        //Will automatically set size according to the soft keyboard size
+        popup.setSizeForSoftKeyboard();
+
+        //If the emoji popup is dismissed, change emojiButton to smiley icon
+        popup.setOnDismissListener(new PopupWindow.OnDismissListener() {
+
+            @Override
+            public void onDismiss() {
+                changeEmojiKeyboardIcon(emojiButton, SmileyIcons);
+            }
+        });
+
+        //If the text keyboard closes, also dismiss the emoji popup
+        popup.setOnSoftKeyboardOpenCloseListener(new EmojiconsPopup.OnSoftKeyboardOpenCloseListener() {
+
+            @Override
+            public void onKeyboardOpen(int keyBoardHeight) {
+                if (keyboardListener != null) {
+                    keyboardListener.onKeyboardOpen();
+                }
+            }
+
+            @Override
+            public void onKeyboardClose() {
+                if (keyboardListener != null) {
+                    keyboardListener.onKeyboardClose();
+                }
+                if (popup.isShowing()) {
+                    popup.dismiss();
+                }
+            }
+        });
+
+        //On emoji clicked, add it to edittext
+        popup.setOnEmojiconClickedListener(new EmojiconGridView.OnEmojiconClickedListener() {
+
+            @Override
+            public void onEmojiconClicked(Emojicon emojicon) {
+                if (emojicon == null) {
+                    return;
+                }
+
+                int start = emojiconEditText.getSelectionStart();
+                int end = emojiconEditText.getSelectionEnd();
+                if (start < 0) {
+                    emojiconEditText.append(emojicon.getEmoji());
+                } else {
+                    emojiconEditText.getText()
+                            .replace(Math.min(start, end),
+                                    Math.max(start, end),
+                                    emojicon.getEmoji(),
+                                    0,
+                                    emojicon.getEmoji()
+                                            .length());
+                }
+            }
+        });
+
+        //On backspace clicked, emulate the KEYCODE_DEL key event
+        popup.setOnEmojiconBackspaceClickedListener(new EmojiconsPopup.OnEmojiconBackspaceClickedListener() {
+
+            @Override
+            public void onEmojiconBackspaceClicked(View v) {
+                KeyEvent event = new KeyEvent(0, 0, 0, KeyEvent.KEYCODE_DEL, 0, 0, 0, 0, KeyEvent.KEYCODE_ENDCALL);
+                emojiconEditText.dispatchKeyEvent(event);
+            }
+        });
+
+        // To toggle between text keyboard and emoji keyboard keyboard(Popup)
+        initEmojiButtonListener();
+    }
+
+    private void initEmojiButtonListener() {
+        if (emojiButton != null) {
+            emojiButton.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    togglePopupVisibility();
+                }
+            });
         }
-      }
-    });
+    }
 
-    //On emoji clicked, add it to edittext
-    popup.setOnEmojiconClickedListener(new EmojiconGridView.OnEmojiconClickedListener() {
-
-      @Override
-      public void onEmojiconClicked(Emojicon emojicon) {
-        if (emojicon == null) {
-          return;
-        }
-
-        int start = emojiconEditText.getSelectionStart();
-        int end = emojiconEditText.getSelectionEnd();
-        if (start < 0) {
-          emojiconEditText.append(emojicon.getEmoji());
+    private void togglePopupVisibility() {
+        if (!popup.isShowing()) {
+            showPopup();
         } else {
-          emojiconEditText.getText()
-                          .replace(Math.min(start, end),
-                                   Math.max(start, end),
-                                   emojicon.getEmoji(),
-                                   0,
-                                   emojicon.getEmoji()
-                                           .length());
+            hidePopup();
         }
-      }
-    });
+    }
 
-    //On backspace clicked, emulate the KEYCODE_DEL key event
-    popup.setOnEmojiconBackspaceClickedListener(new EmojiconsPopup.OnEmojiconBackspaceClickedListener() {
-
-      @Override
-      public void onEmojiconBackspaceClicked(View v) {
-        KeyEvent event = new KeyEvent(0, 0, 0, KeyEvent.KEYCODE_DEL, 0, 0, 0, 0, KeyEvent.KEYCODE_ENDCALL);
-        emojiconEditText.dispatchKeyEvent(event);
-      }
-    });
-
-    // To toggle between text keyboard and emoji keyboard keyboard(Popup)
-    initEmojiButtonListener();
-  }
-
-  private void initEmojiButtonListener() {
-    if (emojiButton != null) {
-      emojiButton.setOnClickListener(new View.OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-          togglePopupVisibility();
+    public void showPopup() {
+        if (emojiconEditText == null) {
+            emojiconEditText = emojiconEditTextList.get(0);
         }
-      });
+        if (popup.isKeyBoardOpen()) {
+            popup.showAtBottom();
+            changeEmojiKeyboardIcon(emojiButton, KeyBoardIcon);
+        } else {
+            emojiconEditText.setFocusableInTouchMode(true);
+            emojiconEditText.requestFocus();
+            final InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.showSoftInput(emojiconEditText, InputMethodManager.SHOW_IMPLICIT);
+            popup.showAtBottomPending();
+            changeEmojiKeyboardIcon(emojiButton, KeyBoardIcon);
+        }
     }
-  }
 
-  private void togglePopupVisibility() {
-    if (!popup.isShowing()) {
-      showPopup();
-    } else {
-      hidePopup();
+    public void hidePopup() {
+        if (popup != null && popup.isShowing()) {
+            popup.dismiss();
+        }
     }
-  }
 
-  public void showPopup() {
-    if (emojiconEditText == null) {
-      emojiconEditText = emojiconEditTextList.get(0);
+    private void changeEmojiKeyboardIcon(ImageView iconToBeChanged, int drawableResourceId) {
+        if (iconToBeChanged != null) {
+            iconToBeChanged.setImageResource(drawableResourceId);
+        }
     }
-    if (popup.isKeyBoardOpen()) {
-      popup.showAtBottom();
-      changeEmojiKeyboardIcon(emojiButton, KeyBoardIcon);
-    } else {
-      emojiconEditText.setFocusableInTouchMode(true);
-      emojiconEditText.requestFocus();
-      final InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-      inputMethodManager.showSoftInput(emojiconEditText, InputMethodManager.SHOW_IMPLICIT);
-      popup.showAtBottomPending();
-      changeEmojiKeyboardIcon(emojiButton, KeyBoardIcon);
+
+    @Override
+    public void onFocusChange(View view, boolean hasFocus) {
+        if (hasFocus) {
+            if (view instanceof EmojiconEditText) {
+                emojiconEditText = (EmojiconEditText) view;
+            }
+        }
     }
-  }
 
-  public void hidePopup() {
-    if (popup != null && popup.isShowing()) {
-      popup.dismiss();
+
+    public interface KeyboardListener {
+        void onKeyboardOpen();
+
+        void onKeyboardClose();
     }
-  }
 
-  private void changeEmojiKeyboardIcon(ImageView iconToBeChanged, int drawableResourceId) {
-    if (iconToBeChanged != null) {
-      iconToBeChanged.setImageResource(drawableResourceId);
+    public void setKeyboardListener(KeyboardListener listener) {
+        this.keyboardListener = listener;
     }
-  }
-
-  @Override
-  public void onFocusChange(View view, boolean hasFocus) {
-    if (hasFocus) {
-      if (view instanceof EmojiconEditText) {
-        emojiconEditText = (EmojiconEditText) view;
-      }
-    }
-  }
-
-
-  public interface KeyboardListener {
-    void onKeyboardOpen();
-
-    void onKeyboardClose();
-  }
-
-  public void setKeyboardListener(KeyboardListener listener) {
-    this.keyboardListener = listener;
-  }
 
 }
