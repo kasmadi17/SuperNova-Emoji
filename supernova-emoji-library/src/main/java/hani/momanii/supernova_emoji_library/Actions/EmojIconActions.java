@@ -94,6 +94,10 @@ public class EmojIconActions implements View.OnFocusChangeListener {
         initListeners();
     }
 
+    public EmojiconsPopup getPopup() {
+        return popup;
+    }
+
     /**
      * @param emojiButton The Id of ImageButton used to open Emoji
      */
