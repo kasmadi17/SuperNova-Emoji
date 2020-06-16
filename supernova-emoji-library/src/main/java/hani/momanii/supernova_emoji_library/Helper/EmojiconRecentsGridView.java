@@ -21,24 +21,20 @@ import android.widget.GridView;
 import hani.momanii.supernova_emoji_library.R;
 import hani.momanii.supernova_emoji_library.emoji.Emojicon;
 
-
 /**
  * @author Daniele Ricci
  * @author Hani Al Momani (hani.momanii@gmail.com)
+ * @author Damai Subimawanto (damai.subimawanto@gmail.com)
  */
 public class EmojiconRecentsGridView  extends EmojiconGridView implements EmojiconRecents {
     EmojiAdapter mAdapter;
-    private boolean mUseSystemDefault = false;
-
-
 
     public EmojiconRecentsGridView(Context context, Emojicon[] emojicons,
                                    EmojiconRecents recents,EmojiconsPopup emojiconsPopup,boolean useSystemDefault) {
         super(context, emojicons, recents, emojiconsPopup,useSystemDefault);
-        this.mUseSystemDefault=useSystemDefault;
         EmojiconRecentsManager recents1 = EmojiconRecentsManager
                 .getInstance(rootView.getContext());
-        mAdapter = new EmojiAdapter(rootView.getContext(),  recents1,mUseSystemDefault);
+        mAdapter = new EmojiAdapter(rootView.getContext(),  recents1, useSystemDefault);
         mAdapter.setEmojiClickListener(new OnEmojiconClickedListener() {
 
             @Override
@@ -48,7 +44,7 @@ public class EmojiconRecentsGridView  extends EmojiconGridView implements Emojic
                 }
             }
         });
-        GridView gridView = (GridView) rootView.findViewById(R.id.Emoji_GridView);
+        GridView gridView = rootView.findViewById(R.id.Emoji_GridView);
         gridView.setAdapter(mAdapter);
         if (mAdapter != null)
             mAdapter.notifyDataSetChanged();
@@ -64,5 +60,4 @@ public class EmojiconRecentsGridView  extends EmojiconGridView implements Emojic
         if (mAdapter != null)
             mAdapter.notifyDataSetChanged();
     }
-
 }

@@ -26,5 +26,5 @@ import hani.momanii.supernova_emoji_library.emoji.Emojicon;
  */
 
 public interface EmojiconRecents {
-    public void addRecentEmoji(Context context, Emojicon emojicon);
+    void addRecentEmoji(Context context, Emojicon emojicon);
 }

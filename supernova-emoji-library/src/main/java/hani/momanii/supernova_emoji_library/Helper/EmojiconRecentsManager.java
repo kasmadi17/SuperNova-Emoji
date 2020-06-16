@@ -15,6 +15,7 @@
  */
 
 package hani.momanii.supernova_emoji_library.Helper;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import java.util.ArrayList;
@@ -59,7 +60,7 @@ public class EmojiconRecentsManager extends ArrayList<Emojicon> {
     }
 
     public void setRecentPage(int page) {
-        getPreferences().edit().putInt(PREF_PAGE, page).commit();
+        getPreferences().edit().putInt(PREF_PAGE, page).apply();
     }
 
     public void push(Emojicon object) {
@@ -73,8 +74,7 @@ public class EmojiconRecentsManager extends ArrayList<Emojicon> {
 
     @Override
     public boolean add(Emojicon object) {
-        boolean ret = super.add(object);
-        return ret;
+        return super.add(object);
     }
 
     @Override
@@ -84,8 +84,7 @@ public class EmojiconRecentsManager extends ArrayList<Emojicon> {
 
     @Override
     public boolean remove(Object object) {
-        boolean ret = super.remove(object);
-        return ret;
+        return super.remove(object);
     }
 
     private SharedPreferences getPreferences() {
@@ -117,7 +116,6 @@ public class EmojiconRecentsManager extends ArrayList<Emojicon> {
             }
         }
         SharedPreferences prefs = getPreferences();
-        prefs.edit().putString(PREF_RECENTS, str.toString()).commit();
+        prefs.edit().putString(PREF_RECENTS, str.toString()).apply();
     }
-
 }

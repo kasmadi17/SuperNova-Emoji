@@ -16,7 +16,7 @@
 
 package hani.momanii.supernova_emoji_library.Helper;
 
-import android.app.Activity;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Rect;
@@ -37,6 +37,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
+import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
@@ -53,9 +54,9 @@ import hani.momanii.supernova_emoji_library.emoji.People;
 import hani.momanii.supernova_emoji_library.emoji.Sport;
 import hani.momanii.supernova_emoji_library.emoji.Symbols;
 
-
 /**
  * @author Hani Al Momani (hani.momanii@gmail.com)
+ * @author Damai Subimawanto (damai.subimawanto@gmail.com)
  */
 
 public class EmojiconsPopup extends PopupWindow implements ViewPager.OnPageChangeListener, EmojiconRecents {
@@ -71,10 +72,9 @@ public class EmojiconsPopup extends PopupWindow implements ViewPager.OnPageChang
     OnSoftKeyboardOpenCloseListener onSoftKeyboardOpenCloseListener;
     View rootView;
     Context mContext;
-    boolean mUseSystemDefault = false;
+    boolean mUseSystemDefault;
     View view;
     int positionPager = 0;
-    boolean setColor = false;
     int iconPressedColor = Color.parseColor("#495C66");
     int tabsColor = Color.parseColor("#DCE1E2");
     int backgroundColor = Color.parseColor("#E6EBEF");
@@ -98,7 +98,6 @@ public class EmojiconsPopup extends PopupWindow implements ViewPager.OnPageChang
         setSoftInputMode(LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         setSize(LayoutParams.MATCH_PARENT, 255);
         setBackgroundDrawable(null);
-
     }
 
     /**
@@ -185,7 +184,7 @@ public class EmojiconsPopup extends PopupWindow implements ViewPager.OnPageChang
                         if (heightDifference > 100) {
                             keyBoardHeight = heightDifference;
                             setSize(LayoutParams.MATCH_PARENT, keyBoardHeight);
-                            if (isOpened == false) {
+                            if (!isOpened) {
                                 if (onSoftKeyboardOpenCloseListener != null) {
                                     onSoftKeyboardOpenCloseListener.onKeyboardOpen(keyBoardHeight);
                                 }
@@ -208,16 +207,15 @@ public class EmojiconsPopup extends PopupWindow implements ViewPager.OnPageChang
     private int getUsableScreenHeight() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             DisplayMetrics metrics = new DisplayMetrics();
-
             WindowManager windowManager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
-            windowManager.getDefaultDisplay()
-                    .getMetrics(metrics);
-
-            return metrics.heightPixels;
-
+            if (windowManager == null) {
+                return 0;
+            } else {
+                windowManager.getDefaultDisplay().getMetrics(metrics);
+                return metrics.heightPixels;
+            }
         } else {
-            return rootView.getRootView()
-                    .getHeight();
+            return rootView.getRootView().getHeight();
         }
     }
 
@@ -245,33 +243,29 @@ public class EmojiconsPopup extends PopupWindow implements ViewPager.OnPageChang
             emojisPager.setCurrentItem(positionPager);
             onPageSelected(positionPager);
             if (!isShowing()) {
-
-                //If keyboard is visible, simply show the emoji popup
                 if (isKeyBoardOpen()) {
+                    // If keyboard is visible, simply show the emoji popup
                     showAtBottom();
                     // changeEmojiKeyboardIcon(emojiButton, R.drawable.ic_action_keyboard);
-                }
-
-                //else, open the text keyboard first and immediately after that show the emoji popup
-                else {
+                } else {
+                    // else, open the text keyboard first and immediately after that show the emoji popup
                     showAtBottomPending();
                     // changeEmojiKeyboardIcon(emojiButton, R.drawable.ic_action_keyboard);
                 }
             }
-
-
         }
     }
 
     private View createCustomView() {
-        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-        view = inflater.inflate(R.layout.emojicons, null, false);
-        emojisPager = (ViewPager) view.findViewById(R.id.emojis_pager);
-        LinearLayout tabs = (LinearLayout) view.findViewById(R.id.emojis_tab);
+        view = LayoutInflater.from(mContext).inflate(R.layout.emojicons, null, false);
+        emojisPager = view.findViewById(R.id.emojis_pager);
+        LinearLayout tabs = view.findViewById(R.id.emojis_tab);
 
-        emojisPager.setOnPageChangeListener(this);
+        emojisPager.clearOnPageChangeListeners();
+        emojisPager.addOnPageChangeListener(this);
         EmojiconRecents recents = this;
-        mEmojisAdapter = new EmojisPagerAdapter(Arrays.asList(new EmojiconRecentsGridView(mContext, null, null, this, mUseSystemDefault),
+        mEmojisAdapter = new EmojisPagerAdapter(Arrays.asList(
+                new EmojiconRecentsGridView(mContext, null, null, this, mUseSystemDefault),
                 new EmojiconGridView(mContext, People.DATA, recents, this, mUseSystemDefault),
                 new EmojiconGridView(mContext, Nature.DATA, recents, this, mUseSystemDefault),
                 new EmojiconGridView(mContext, Food.DATA, recents, this, mUseSystemDefault),
@@ -279,7 +273,6 @@ public class EmojiconsPopup extends PopupWindow implements ViewPager.OnPageChang
                 new EmojiconGridView(mContext, Cars.DATA, recents, this, mUseSystemDefault),
                 new EmojiconGridView(mContext, Electr.DATA, recents, this, mUseSystemDefault),
                 new EmojiconGridView(mContext, Symbols.DATA, recents, this, mUseSystemDefault)
-
         ));
         emojisPager.setAdapter(mEmojisAdapter);
         mEmojiTabs = new View[8];
@@ -302,18 +295,16 @@ public class EmojiconsPopup extends PopupWindow implements ViewPager.OnPageChang
             });
         }
 
-
         emojisPager.setBackgroundColor(backgroundColor);
         tabs.setBackgroundColor(tabsColor);
-        for (int x = 0; x < mEmojiTabs.length; x++) {
-            ImageButton btn = (ImageButton) mEmojiTabs[x];
+        for (View mEmojiTab : mEmojiTabs) {
+            ImageButton btn = (ImageButton) mEmojiTab;
             btn.setColorFilter(iconPressedColor);
         }
 
-        ImageButton imgBtn = (ImageButton) view.findViewById(R.id.emojis_backspace);
+        ImageButton imgBtn = view.findViewById(R.id.emojis_backspace);
         imgBtn.setColorFilter(iconPressedColor);
         imgBtn.setBackgroundColor(backgroundColor);
-
 
         view.findViewById(R.id.emojis_backspace)
                 .setOnTouchListener(new RepeatListener(500, 50, new OnClickListener() {
@@ -345,14 +336,15 @@ public class EmojiconsPopup extends PopupWindow implements ViewPager.OnPageChang
 
     @Override
     public void addRecentEmoji(Context context, Emojicon emojicon) {
-        EmojiconRecentsGridView fragment = ((EmojisPagerAdapter) emojisPager.getAdapter()).getRecentFragment();
-        fragment.addRecentEmoji(context, emojicon);
+        PagerAdapter pagerAdapter = emojisPager.getAdapter();
+        if (pagerAdapter instanceof EmojisPagerAdapter) {
+            EmojiconRecentsGridView fragment = ((EmojisPagerAdapter) emojisPager.getAdapter()).getRecentFragment();
+            fragment.addRecentEmoji(context, emojicon);
+        }
     }
-
 
     @Override
-    public void onPageScrolled(int i, float v, int i2) {
-    }
+    public void onPageScrolled(int i, float v, int i2) {}
 
     @Override
     public void onPageSelected(int i) {
@@ -380,8 +372,7 @@ public class EmojiconsPopup extends PopupWindow implements ViewPager.OnPageChang
     }
 
     @Override
-    public void onPageScrollStateChanged(int i) {
-    }
+    public void onPageScrollStateChanged(int i) {}
 
     /**
      * @param iconPressedColor The color of icons on tab
@@ -416,21 +407,21 @@ public class EmojiconsPopup extends PopupWindow implements ViewPager.OnPageChang
             return views.size();
         }
 
-
+        @NonNull
         @Override
-        public Object instantiateItem(ViewGroup container, int position) {
+        public Object instantiateItem(@NonNull ViewGroup container, int position) {
             View v = views.get(position).rootView;
-            ((ViewPager) container).addView(v, 0);
+            container.addView(v, 0);
             return v;
         }
 
         @Override
-        public void destroyItem(ViewGroup container, int position, Object view) {
-            ((ViewPager) container).removeView((View) view);
+        public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object view) {
+            container.removeView((View) view);
         }
 
         @Override
-        public boolean isViewFromObject(View view, Object key) {
+        public boolean isViewFromObject(@NonNull View view, @NonNull Object key) {
             return key == view;
         }
     }
@@ -486,6 +477,7 @@ public class EmojiconsPopup extends PopupWindow implements ViewPager.OnPageChang
             this.clickListener = clickListener;
         }
 
+        @SuppressLint("ClickableViewAccessibility")
         public boolean onTouch(View view, MotionEvent motionEvent) {
             switch (motionEvent.getAction()) {
                 case MotionEvent.ACTION_DOWN:
@@ -511,9 +503,6 @@ public class EmojiconsPopup extends PopupWindow implements ViewPager.OnPageChang
 
     public interface OnSoftKeyboardOpenCloseListener {
         void onKeyboardOpen(int keyBoardHeight);
-
         void onKeyboardClose();
     }
-
-
 }

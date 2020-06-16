@@ -31,10 +31,8 @@ import hani.momanii.supernova_emoji_library.R;
  * @author Hani Al Momani (hani.momanii@gmail.com)
  */
 
-
 public final class EmojiconHandler {
-    private EmojiconHandler() {
-    }
+    private EmojiconHandler() {}
 
     private static final SparseIntArray sEmojisMap = new SparseIntArray(1029);
     private static final SparseIntArray sSoftbanksMap = new SparseIntArray(471);

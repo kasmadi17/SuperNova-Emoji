@@ -20,15 +20,17 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.text.style.DynamicDrawableSpan;
 import android.util.AttributeSet;
-import android.widget.EditText;
+
+import androidx.appcompat.widget.AppCompatEditText;
 
 import hani.momanii.supernova_emoji_library.R;
 
 /**
  * @author Hieu Rocker (rockerhieu@gmail.com).
  * @author Hani Al Momani (hani.momanii@gmail.com)
+ * @author Damai Subimawanto (damai.subimawanto@gmail.com)
  */
-public class EmojiconEditText extends EditText {
+public class EmojiconEditText extends AppCompatEditText {
     private int mEmojiconSize;
     private int mEmojiconAlignment;
     private int mEmojiconTextSize;

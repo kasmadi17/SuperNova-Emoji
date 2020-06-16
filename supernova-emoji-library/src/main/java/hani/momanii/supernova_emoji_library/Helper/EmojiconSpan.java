@@ -22,6 +22,8 @@ import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.text.style.DynamicDrawableSpan;
 
+import androidx.annotation.NonNull;
+
 import java.lang.ref.WeakReference;
 
 /**
@@ -73,7 +75,7 @@ class EmojiconSpan extends DynamicDrawableSpan {
 
     @Override
     public void draw(Canvas canvas, CharSequence text, int start, int end, float x, int top, int
-            y, int bottom, Paint paint) {
+            y, int bottom, @NonNull Paint paint) {
         //super.draw(canvas, text, start, end, x, top, y, bottom, paint);
         Drawable b = getCachedDrawable();
         canvas.save();
@@ -91,7 +93,7 @@ class EmojiconSpan extends DynamicDrawableSpan {
 
     private Drawable getCachedDrawable() {
         if (mDrawableRef == null || mDrawableRef.get() == null) {
-            mDrawableRef = new WeakReference<Drawable>(getDrawable());
+            mDrawableRef = new WeakReference<>(getDrawable());
         }
         return mDrawableRef.get();
     }
