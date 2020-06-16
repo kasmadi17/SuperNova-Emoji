@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">SuperNova-Emoji</string>
+    <string name="content_description">ContentDescription</string>
 </resources>

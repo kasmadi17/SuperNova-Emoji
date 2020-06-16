@@ -1,12 +1,13 @@
 package momanii.hani.supernova_emoji;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import hani.momanii.supernova_emoji_library.Actions.EmojIconActions;
 import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
@@ -28,12 +29,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         rootView = findViewById(R.id.root_view);
-        emojiButton = (ImageView) findViewById(R.id.emoji_btn);
-        submitButton = (ImageView) findViewById(R.id.submit_btn);
-        mCheckBox = (CheckBox) findViewById(R.id.use_system_default);
-        emojiconEditText = (EmojiconEditText) findViewById(R.id.emojicon_edit_text);
-        emojiconEditText2 = (EmojiconEditText) findViewById(R.id.emojicon_edit_text2);
-        textView = (EmojiconTextView) findViewById(R.id.textView);
+        emojiButton = findViewById(R.id.emoji_btn);
+        submitButton = findViewById(R.id.submit_btn);
+        mCheckBox = findViewById(R.id.use_system_default);
+        emojiconEditText = findViewById(R.id.emojicon_edit_text);
+        emojiconEditText2 = findViewById(R.id.emojicon_edit_text2);
+        textView = findViewById(R.id.textView);
         emojIcon = new EmojIconActions(this, rootView, emojiconEditText, emojiButton);
         emojIcon.setKeyboardListener(new EmojIconActions.KeyboardListener() {
             @Override
@@ -56,14 +57,9 @@ public class MainActivity extends AppCompatActivity {
         });
         emojIcon.addEmojiconEditTextList(emojiconEditText2);
 
-        submitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String newText = emojiconEditText.getText().toString();
-                textView.setText(newText);
-            }
+        submitButton.setOnClickListener(v -> {
+            String newText = emojiconEditText.getText().toString();
+            textView.setText(newText);
         });
     }
-
-
 }
