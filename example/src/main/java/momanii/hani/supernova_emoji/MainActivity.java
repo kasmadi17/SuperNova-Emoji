@@ -1,10 +1,10 @@
 package momanii.hani.supernova_emoji;
 
 import android.os.Bundle;
+import android.text.Editable;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,7 +14,6 @@ import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
 import hani.momanii.supernova_emoji_library.Helper.EmojiconTextView;
 
 public class MainActivity extends AppCompatActivity {
-
     CheckBox mCheckBox;
     EmojiconEditText emojiconEditText, emojiconEditText2;
     EmojiconTextView textView;
@@ -48,18 +47,20 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                emojIcon.setUseSystemEmoji(b);
-                textView.setUseSystemDefault(b);
-            }
+        mCheckBox.setOnCheckedChangeListener((compoundButton, b) -> {
+            emojIcon.setUseSystemEmoji(b);
+            textView.setUseSystemDefault(b);
         });
         emojIcon.addEmojiconEditTextList(emojiconEditText2);
 
         submitButton.setOnClickListener(v -> {
-            String newText = emojiconEditText.getText().toString();
-            textView.setText(newText);
+            Editable editableText = emojiconEditText.getText();
+            if (editableText == null) {
+                textView.setText("");
+            } else {
+                String newText = editableText.toString();
+                textView.setText(newText);
+            }
         });
     }
 }
