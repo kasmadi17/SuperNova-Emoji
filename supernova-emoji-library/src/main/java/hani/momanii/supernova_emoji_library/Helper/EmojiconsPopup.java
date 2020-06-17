@@ -17,13 +17,15 @@
 package hani.momanii.supernova_emoji_library.Helper;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -31,7 +33,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
-import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -170,53 +171,40 @@ public class EmojiconsPopup extends PopupWindow implements ViewPager.OnPageChang
                 .addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
                     @Override
                     public void onGlobalLayout() {
-                        Rect r = new Rect();
-                        rootView.getWindowVisibleDisplayFrame(r);
+                        if (mContext instanceof Activity) {
+                            Point screenSize = new Point();
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                ((Activity) mContext).getWindowManager().getDefaultDisplay().getRealSize(screenSize);
+                            } else {
+                                ((Activity) mContext).getWindowManager().getDefaultDisplay().getSize(screenSize);
+                            }
 
-                        int screenHeight = getUsableScreenHeight();
-                        int heightDifference = screenHeight - (r.bottom - r.top);
-                        int resourceId = mContext.getResources()
-                                .getIdentifier("status_bar_height", "dimen", "android");
-                        if (resourceId > 0) {
-                            heightDifference -= mContext.getResources()
-                                    .getDimensionPixelSize(resourceId);
-                        }
-                        if (heightDifference > 100) {
-                            keyBoardHeight = heightDifference;
-                            setSize(LayoutParams.MATCH_PARENT, keyBoardHeight);
-                            if (!isOpened) {
-                                if (onSoftKeyboardOpenCloseListener != null) {
-                                    onSoftKeyboardOpenCloseListener.onKeyboardOpen(keyBoardHeight);
+                            Rect rect = new Rect();
+                            rootView.getWindowVisibleDisplayFrame(rect);
+                            int heightDifference = screenSize.y - rect.bottom;
+                            Log.d("zxczxc", "heightDifference = " + heightDifference);
+                            if (heightDifference > 100) {
+                                keyBoardHeight = heightDifference;
+                                setSize(LayoutParams.MATCH_PARENT, keyBoardHeight);
+                                if (!isOpened) {
+                                    if (onSoftKeyboardOpenCloseListener != null) {
+                                        onSoftKeyboardOpenCloseListener.onKeyboardOpen(keyBoardHeight);
+                                    }
                                 }
-                            }
-                            isOpened = true;
-                            if (pendingOpen) {
-                                showAtBottom();
-                                pendingOpen = false;
-                            }
-                        } else {
-                            isOpened = false;
-                            if (onSoftKeyboardOpenCloseListener != null) {
-                                onSoftKeyboardOpenCloseListener.onKeyboardClose();
+                                isOpened = true;
+                                if (pendingOpen) {
+                                    showAtBottom();
+                                    pendingOpen = false;
+                                }
+                            } else {
+                                isOpened = false;
+                                if (onSoftKeyboardOpenCloseListener != null) {
+                                    onSoftKeyboardOpenCloseListener.onKeyboardClose();
+                                }
                             }
                         }
                     }
                 });
-    }
-
-    private int getUsableScreenHeight() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            DisplayMetrics metrics = new DisplayMetrics();
-            WindowManager windowManager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
-            if (windowManager == null) {
-                return 0;
-            } else {
-                windowManager.getDefaultDisplay().getMetrics(metrics);
-                return metrics.heightPixels;
-            }
-        } else {
-            return rootView.getRootView().getHeight();
-        }
     }
 
     /**
