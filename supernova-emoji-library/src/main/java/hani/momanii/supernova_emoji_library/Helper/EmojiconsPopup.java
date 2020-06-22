@@ -185,7 +185,6 @@ public class EmojiconsPopup extends PopupWindow implements ViewPager.OnPageChang
 
                             if (heightDifference > getDefaultNavigationBarHeight(mContext)) {
                                 keyBoardHeight = heightDifference - systemNavigationBarHeight;
-                                systemNavigationBarHeight = null;
                                 setSize(LayoutParams.MATCH_PARENT, keyBoardHeight);
                                 if (!isOpened) {
                                     if (onSoftKeyboardOpenCloseListener != null) {
