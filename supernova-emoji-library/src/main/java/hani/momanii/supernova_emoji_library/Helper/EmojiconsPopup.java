@@ -17,13 +17,15 @@
 package hani.momanii.supernova_emoji_library.Helper;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -31,7 +33,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
-import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -78,6 +79,7 @@ public class EmojiconsPopup extends PopupWindow implements ViewPager.OnPageChang
     int iconPressedColor = Color.parseColor("#495C66");
     int tabsColor = Color.parseColor("#DCE1E2");
     int backgroundColor = Color.parseColor("#E6EBEF");
+    Integer systemNavigationBarHeight = null;
 
     private ViewPager emojisPager;
 
@@ -170,53 +172,40 @@ public class EmojiconsPopup extends PopupWindow implements ViewPager.OnPageChang
                 .addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
                     @Override
                     public void onGlobalLayout() {
-                        Rect r = new Rect();
-                        rootView.getWindowVisibleDisplayFrame(r);
-
-                        int screenHeight = getUsableScreenHeight();
-                        int heightDifference = screenHeight - (r.bottom - r.top);
-                        int resourceId = mContext.getResources()
-                                .getIdentifier("status_bar_height", "dimen", "android");
-                        if (resourceId > 0) {
-                            heightDifference -= mContext.getResources()
-                                    .getDimensionPixelSize(resourceId);
-                        }
-                        if (heightDifference > 100) {
-                            keyBoardHeight = heightDifference;
-                            setSize(LayoutParams.MATCH_PARENT, keyBoardHeight);
-                            if (!isOpened) {
-                                if (onSoftKeyboardOpenCloseListener != null) {
-                                    onSoftKeyboardOpenCloseListener.onKeyboardOpen(keyBoardHeight);
+                        if (mContext instanceof Activity) {
+                            int heightDifference = getHeightDifference(mContext);
+                            if (heightDifference > 0) {
+                                if (systemNavigationBarHeight == null) {
+                                    /* Get layout height when the layout was created at first time */
+                                    systemNavigationBarHeight = heightDifference;
                                 }
+                            } else {
+                                systemNavigationBarHeight = 0;
                             }
-                            isOpened = true;
-                            if (pendingOpen) {
-                                showAtBottom();
-                                pendingOpen = false;
-                            }
-                        } else {
-                            isOpened = false;
-                            if (onSoftKeyboardOpenCloseListener != null) {
-                                onSoftKeyboardOpenCloseListener.onKeyboardClose();
+
+                            if (heightDifference > getDefaultNavigationBarHeight(mContext)) {
+                                keyBoardHeight = heightDifference - systemNavigationBarHeight;
+                                systemNavigationBarHeight = null;
+                                setSize(LayoutParams.MATCH_PARENT, keyBoardHeight);
+                                if (!isOpened) {
+                                    if (onSoftKeyboardOpenCloseListener != null) {
+                                        onSoftKeyboardOpenCloseListener.onKeyboardOpen(keyBoardHeight);
+                                    }
+                                }
+                                isOpened = true;
+                                if (pendingOpen) {
+                                    showAtBottom();
+                                    pendingOpen = false;
+                                }
+                            } else {
+                                isOpened = false;
+                                if (onSoftKeyboardOpenCloseListener != null) {
+                                    onSoftKeyboardOpenCloseListener.onKeyboardClose();
+                                }
                             }
                         }
                     }
                 });
-    }
-
-    private int getUsableScreenHeight() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            DisplayMetrics metrics = new DisplayMetrics();
-            WindowManager windowManager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
-            if (windowManager == null) {
-                return 0;
-            } else {
-                windowManager.getDefaultDisplay().getMetrics(metrics);
-                return metrics.heightPixels;
-            }
-        } else {
-            return rootView.getRootView().getHeight();
-        }
     }
 
     /**
@@ -332,6 +321,28 @@ public class EmojiconsPopup extends PopupWindow implements ViewPager.OnPageChang
             emojisPager.setCurrentItem(page, false);
         }
         return view;
+    }
+
+    private int getHeightDifference(Context context) {
+        Point screenSize = new Point();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            ((Activity) context).getWindowManager().getDefaultDisplay().getRealSize(screenSize);
+        } else {
+            ((Activity) context).getWindowManager().getDefaultDisplay().getSize(screenSize);
+        }
+
+        Rect rect = new Rect();
+        rootView.getWindowVisibleDisplayFrame(rect);
+        return screenSize.y - rect.bottom;
+    }
+
+    private int getDefaultNavigationBarHeight(Context context) {
+        Resources resources = context.getResources();
+        int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            return resources.getDimensionPixelSize(resourceId);
+        }
+        return 100;
     }
 
     @Override
