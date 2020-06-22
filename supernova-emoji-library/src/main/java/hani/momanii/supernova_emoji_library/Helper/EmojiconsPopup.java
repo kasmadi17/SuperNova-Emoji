@@ -19,13 +19,13 @@ package hani.momanii.supernova_emoji_library.Helper;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -79,6 +79,7 @@ public class EmojiconsPopup extends PopupWindow implements ViewPager.OnPageChang
     int iconPressedColor = Color.parseColor("#495C66");
     int tabsColor = Color.parseColor("#DCE1E2");
     int backgroundColor = Color.parseColor("#E6EBEF");
+    Integer systemNavigationBarHeight = null;
 
     private ViewPager emojisPager;
 
@@ -172,19 +173,19 @@ public class EmojiconsPopup extends PopupWindow implements ViewPager.OnPageChang
                     @Override
                     public void onGlobalLayout() {
                         if (mContext instanceof Activity) {
-                            Point screenSize = new Point();
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                                ((Activity) mContext).getWindowManager().getDefaultDisplay().getRealSize(screenSize);
+                            int heightDifference = getHeightDifference(mContext);
+                            if (heightDifference > 0) {
+                                if (systemNavigationBarHeight == null) {
+                                    /* Get layout height when the layout was created at first time */
+                                    systemNavigationBarHeight = heightDifference;
+                                }
                             } else {
-                                ((Activity) mContext).getWindowManager().getDefaultDisplay().getSize(screenSize);
+                                systemNavigationBarHeight = 0;
                             }
 
-                            Rect rect = new Rect();
-                            rootView.getWindowVisibleDisplayFrame(rect);
-                            int heightDifference = screenSize.y - rect.bottom;
-                            Log.d("zxczxc", "heightDifference = " + heightDifference);
-                            if (heightDifference > 100) {
-                                keyBoardHeight = heightDifference;
+                            if (heightDifference > getDefaultNavigationBarHeight(mContext)) {
+                                keyBoardHeight = heightDifference - systemNavigationBarHeight;
+                                systemNavigationBarHeight = null;
                                 setSize(LayoutParams.MATCH_PARENT, keyBoardHeight);
                                 if (!isOpened) {
                                     if (onSoftKeyboardOpenCloseListener != null) {
@@ -320,6 +321,28 @@ public class EmojiconsPopup extends PopupWindow implements ViewPager.OnPageChang
             emojisPager.setCurrentItem(page, false);
         }
         return view;
+    }
+
+    private int getHeightDifference(Context context) {
+        Point screenSize = new Point();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            ((Activity) context).getWindowManager().getDefaultDisplay().getRealSize(screenSize);
+        } else {
+            ((Activity) context).getWindowManager().getDefaultDisplay().getSize(screenSize);
+        }
+
+        Rect rect = new Rect();
+        rootView.getWindowVisibleDisplayFrame(rect);
+        return screenSize.y - rect.bottom;
+    }
+
+    private int getDefaultNavigationBarHeight(Context context) {
+        Resources resources = context.getResources();
+        int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            return resources.getDimensionPixelSize(resourceId);
+        }
+        return 100;
     }
 
     @Override
