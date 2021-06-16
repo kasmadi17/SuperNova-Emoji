@@ -56,7 +56,6 @@ public class EmojIconActions implements View.OnFocusChangeListener,
     private EmojiconEditText emojiconEditText;
     private ArrayList<StickerData> stickerData;
     public StickerOnClickListener stickerOnClickListener;
-    private FragmentManager fragmentManager;
 
     /**
      * Constructor
@@ -72,16 +71,14 @@ public class EmojIconActions implements View.OnFocusChangeListener,
                            View rootView,
                            EmojiconEditText emojiconEditText,
                            ImageView emojiButton,
-                           ArrayList<StickerData> stickerData,
                            View viewOnClick,
-                           StickerOnClickListener stickerOnClickListener,
-                           FragmentManager fragmentManager) {
+                           ArrayList<StickerData> stickerData,
+                           StickerOnClickListener stickerOnClickListener) {
         this.emojiButton = emojiButton;
         this.stickerData = stickerData;
         this.context = ctx;
         this.rootView = rootView;
         this.stickerOnClickListener = stickerOnClickListener;
-        this.fragmentManager = fragmentManager;
         addEmojiconEditTextList(emojiconEditText);
         this.popup = new EmojiconsPopup(rootView, ctx, stickerData, useSystemEmoji, this);
         this.onViewClick = viewOnClick;
@@ -100,17 +97,15 @@ public class EmojIconActions implements View.OnFocusChangeListener,
     public EmojIconActions(Context ctx,
                            View rootView,
                            EmojiconEditText emojiconEditText,
-                           ArrayList<StickerData> stickerData,
                            View viewOnClick,
-                           StickerOnClickListener stickerOnClickListener,
-                           FragmentManager fragmentManager) {
+                           ArrayList<StickerData> stickerData,
+                           StickerOnClickListener stickerOnClickListener) {
         addEmojiconEditTextList(emojiconEditText);
         this.context = ctx;
         this.rootView = rootView;
         this.popup = new EmojiconsPopup(rootView, ctx, stickerData, useSystemEmoji, this);
         this.onViewClick = viewOnClick;
         this.stickerOnClickListener = stickerOnClickListener;
-        this.fragmentManager = fragmentManager;
         initListeners();
     }
 
