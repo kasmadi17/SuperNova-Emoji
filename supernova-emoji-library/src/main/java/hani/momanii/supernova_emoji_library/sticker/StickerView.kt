@@ -10,8 +10,8 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.tabs.TabLayout
 import com.squareup.picasso.Picasso
-import hani.momanii.supernova_emoji_library.helper.EmojiconsPopup
 import hani.momanii.supernova_emoji_library.R
+import hani.momanii.supernova_emoji_library.helper.EmojiconsPopup
 
 private const val ARG_STICKER = "ARG_STICKER"
 
@@ -91,11 +91,11 @@ class StickerView(
         tabHeader?.getTabAt(position)?.customView = view
     }
 
-    /**
-     * @param [url] url media
-     * @param [type] sticker | gif
-     */
     interface OnStickerClick {
-        fun onStickerClicked(url: String?, type:String)
+        /**
+         * @param [url] url media
+         * @param [type] sticker | gif
+         */
+        fun onStickerClicked(url: String?, type: String)
     }
 }

@@ -26,34 +26,12 @@ public class MainActivity extends AppCompatActivity {
     ImageView submitButton;
     View rootView;
     EmojIconActions emojIcon;
-    ArrayList<StickerData> stickerData = new ArrayList<>();
+   String stickerData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        StickerData a = new StickerData();
-        ArrayList<StickerItem> s = new ArrayList<>();
-
-        a.setGroupId(0);
-        a.setGroupName("test");
-        a.setImageHeader("https://dev-static.rctiplus.id/media/50/files/fta_rcti/Icon/0_icon/placeholder_icon.jpg");
-        a.setSticker(s);
-
-        StickerItem c = new StickerItem();
-
-        c.setId(0);
-        c.setName("test");
-        c.setUrl("https://dev-static.rctiplus.id/media/50/files/fta_rcti/Icon/0_icon/placeholder_icon.jpg");
-        c.setId(1);
-        c.setName("test");
-        c.setUrl("https://dev-static.rctiplus.id/media/50/files/fta_rcti/Icon/0_icon/placeholder_icon.jpg");
-        s.add(c);
-
-
-        stickerData.add(a);
-
 
         rootView = findViewById(R.id.root_view);
         emojiButton = findViewById(R.id.emoji_btn);
@@ -67,8 +45,9 @@ public class MainActivity extends AppCompatActivity {
                 rootView,
                 emojiconEditText,
                 emojiButton,
+                emojiButton,
                 stickerData,
-                emojiButton, new EmojIconActions.StickerOnClickListener() {
+                new EmojIconActions.StickerOnClickListener() {
             @Override
             public void onClick(String url, String type) {
 
@@ -82,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
                         url -> Log.i("TAG", "onContentClicked: "));
 
             }
-        }, getSupportFragmentManager());
+        });
 
 
         emojIcon.setKeyboardListener(new EmojIconActions.KeyboardListener() {

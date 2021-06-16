@@ -24,6 +24,8 @@ import android.widget.ImageView;
 
 import androidx.fragment.app.FragmentManager;
 
+import com.google.gson.Gson;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,6 +38,7 @@ import hani.momanii.supernova_emoji_library.gif.SearchGifFragment;
 import hani.momanii.supernova_emoji_library.helper.EmojiconEditText;
 import hani.momanii.supernova_emoji_library.helper.EmojiconsPopup;
 import hani.momanii.supernova_emoji_library.sticker.StickerData;
+import hani.momanii.supernova_emoji_library.sticker.StickerModel;
 import hani.momanii.supernova_emoji_library.sticker.StickerView;
 
 /**
@@ -72,15 +75,14 @@ public class EmojIconActions implements View.OnFocusChangeListener,
                            EmojiconEditText emojiconEditText,
                            ImageView emojiButton,
                            View viewOnClick,
-                           ArrayList<StickerData> stickerData,
+                           String stickerData,
                            StickerOnClickListener stickerOnClickListener) {
         this.emojiButton = emojiButton;
-        this.stickerData = stickerData;
         this.context = ctx;
         this.rootView = rootView;
         this.stickerOnClickListener = stickerOnClickListener;
         addEmojiconEditTextList(emojiconEditText);
-        this.popup = new EmojiconsPopup(rootView, ctx, stickerData, useSystemEmoji, this);
+        this.popup = new EmojiconsPopup(rootView, ctx, jsonToPojo(stickerData), useSystemEmoji, this);
         this.onViewClick = viewOnClick;
         initListeners();
     }
@@ -98,12 +100,12 @@ public class EmojIconActions implements View.OnFocusChangeListener,
                            View rootView,
                            EmojiconEditText emojiconEditText,
                            View viewOnClick,
-                           ArrayList<StickerData> stickerData,
+                           String stickerData,
                            StickerOnClickListener stickerOnClickListener) {
         addEmojiconEditTextList(emojiconEditText);
         this.context = ctx;
         this.rootView = rootView;
-        this.popup = new EmojiconsPopup(rootView, ctx, stickerData, useSystemEmoji, this);
+        this.popup = new EmojiconsPopup(rootView, ctx, jsonToPojo(stickerData), useSystemEmoji, this);
         this.onViewClick = viewOnClick;
         this.stickerOnClickListener = stickerOnClickListener;
         initListeners();
@@ -278,6 +280,15 @@ public class EmojIconActions implements View.OnFocusChangeListener,
     @Override
     public void onSearchClicked() {
         stickerOnClickListener.onSearchClick();
+    }
+
+    private ArrayList<StickerData> jsonToPojo(String json){
+        Gson gson = new Gson();
+        StickerModel a = gson.fromJson(json, StickerModel.class);
+        if (a.getData()!=null){
+            stickerData.addAll(a.getData());
+        }
+        return stickerData;
     }
 
 

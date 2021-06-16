@@ -38,6 +38,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import hani.momanii.supernova_emoji_library.R;
 import hani.momanii.supernova_emoji_library.emojiview.EmojiView;
