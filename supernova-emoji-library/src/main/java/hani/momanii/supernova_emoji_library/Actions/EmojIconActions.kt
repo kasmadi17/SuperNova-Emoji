@@ -13,78 +13,71 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package hani.momanii.supernova_emoji_library.Actions;
+package hani.momanii.supernova_emoji_library.Actions
 
-import android.content.Context;
-import android.text.Editable;
-import android.view.KeyEvent;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.ImageView;
-
-import androidx.fragment.app.FragmentManager;
-
-import com.google.gson.Gson;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import hani.momanii.supernova_emoji_library.R;
-import hani.momanii.supernova_emoji_library.gif.SearchGifFragment;
-import hani.momanii.supernova_emoji_library.helper.EmojiconEditText;
-import hani.momanii.supernova_emoji_library.helper.EmojiconsPopup;
-import hani.momanii.supernova_emoji_library.sticker.StickerData;
-import hani.momanii.supernova_emoji_library.sticker.StickerModel;
-import hani.momanii.supernova_emoji_library.sticker.StickerView;
+import android.content.Context
+import android.view.KeyEvent
+import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
+import com.google.gson.Gson
+import hani.momanii.supernova_emoji_library.R
+import hani.momanii.supernova_emoji_library.emoji.Emojicon
+import hani.momanii.supernova_emoji_library.helper.EmojiconEditText
+import hani.momanii.supernova_emoji_library.helper.EmojiconsPopup
+import hani.momanii.supernova_emoji_library.helper.EmojiconsPopup.OnSearchClicked
+import hani.momanii.supernova_emoji_library.helper.EmojiconsPopup.OnSoftKeyboardOpenCloseListener
+import hani.momanii.supernova_emoji_library.sticker.StickerData
+import hani.momanii.supernova_emoji_library.sticker.StickerModel
+import hani.momanii.supernova_emoji_library.sticker.StickerView.OnStickerClick
+import java.util.*
 
 /**
  * @author Hani Al Momani (hani.momanii@gmail.com)
  */
-public class EmojIconActions implements View.OnFocusChangeListener,
-        EmojiconsPopup.OnSearchClicked{
-    private boolean useSystemEmoji = false;
-    private EmojiconsPopup popup;
-    private Context context;
-    private View rootView;
-    private View onViewClick;
-    private ImageView emojiButton;
-    private int KeyBoardIcon = R.drawable.ic_action_keyboard;
-    private int SmileyIcons = R.drawable.smiley;
-    private KeyboardListener keyboardListener;
-    private List<EmojiconEditText> emojiconEditTextList = new ArrayList<>();
-    private EmojiconEditText emojiconEditText;
-    private ArrayList<StickerData> stickerData;
-    public StickerOnClickListener stickerOnClickListener;
+class EmojIconActions : View.OnFocusChangeListener, OnSearchClicked {
+    private val useSystemEmoji = false
+    var popup: EmojiconsPopup?
+        private set
+    private var context: Context
+    private var rootView: View
+    private var onViewClick: View
+    private var emojiButton: ImageView? = null
+    private var KeyBoardIcon = R.drawable.ic_action_keyboard
+    private var SmileyIcons = R.drawable.smiley
+    private var keyboardListener: KeyboardListener? = null
+    private val emojiconEditTextList: MutableList<EmojiconEditText> = mutableListOf()
+    private var emojiconEditText: EmojiconEditText? = null
+    private val stickerData: ArrayList<StickerData>? = null
+    var stickerOnClickListener: StickerOnClickListener
 
     /**
      * Constructor
      *
      * @param ctx              The context of current activity.
      * @param rootView         The top most layout in your view hierarchy. The difference of this
-     *                         view and the screen height will be used to calculate the keyboard
-     *                         height.
+     * view and the screen height will be used to calculate the keyboard
+     * height.
      * @param emojiconEditText The Id of EditText.
      * @param emojiButton      The Id of ImageButton used to open Emoji
      */
-    public EmojIconActions(Context ctx,
-                           View rootView,
-                           EmojiconEditText emojiconEditText,
-                           ImageView emojiButton,
-                           View viewOnClick,
-                           String stickerData,
-                           StickerOnClickListener stickerOnClickListener) {
-        this.emojiButton = emojiButton;
-        this.context = ctx;
-        this.rootView = rootView;
-        this.stickerOnClickListener = stickerOnClickListener;
-        addEmojiconEditTextList(emojiconEditText);
-        this.popup = new EmojiconsPopup(rootView, ctx, jsonToPojo(stickerData), useSystemEmoji, this);
-        this.onViewClick = viewOnClick;
-        initListeners();
+    constructor(
+        ctx: Context,
+        rootView: View,
+        emojiconEditText: EmojiconEditText?,
+        emojiButton: ImageView?,
+        viewOnClick: View,
+        stickerData: String,
+        stickerOnClickListener: StickerOnClickListener
+    ) {
+        this.emojiButton = emojiButton
+        context = ctx
+        this.rootView = rootView
+        this.stickerOnClickListener = stickerOnClickListener
+        addEmojiconEditTextList(emojiconEditText!!)
+        popup = EmojiconsPopup(rootView, ctx, jsonToPojo(stickerData), useSystemEmoji, this)
+        onViewClick = viewOnClick
+        initListeners()
     }
 
     /**
@@ -92,143 +85,139 @@ public class EmojIconActions implements View.OnFocusChangeListener,
      *
      * @param ctx              The context of current activity.
      * @param rootView         The top most layout in your view hierarchy. The difference of this
-     *                         view and the screen height will be used to calculate the keyboard
-     *                         height.
+     * view and the screen height will be used to calculate the keyboard
+     * height.
      * @param emojiconEditText The Id of EditText.
      */
-    public EmojIconActions(Context ctx,
-                           View rootView,
-                           EmojiconEditText emojiconEditText,
-                           View viewOnClick,
-                           String stickerData,
-                           StickerOnClickListener stickerOnClickListener) {
-        addEmojiconEditTextList(emojiconEditText);
-        this.context = ctx;
-        this.rootView = rootView;
-        this.popup = new EmojiconsPopup(rootView, ctx, jsonToPojo(stickerData), useSystemEmoji, this);
-        this.onViewClick = viewOnClick;
-        this.stickerOnClickListener = stickerOnClickListener;
-        initListeners();
+    constructor(
+        ctx: Context,
+        rootView: View,
+        emojiconEditText: EmojiconEditText?,
+        viewOnClick: View,
+        stickerData: String,
+        stickerOnClickListener: StickerOnClickListener
+    ) {
+        addEmojiconEditTextList(emojiconEditText!!)
+        context = ctx
+        this.rootView = rootView
+        popup = EmojiconsPopup(rootView, ctx, jsonToPojo(stickerData), useSystemEmoji, this)
+        onViewClick = viewOnClick
+        this.stickerOnClickListener = stickerOnClickListener
+        initListeners()
     }
 
-    @Override
-    public void onFocusChange(View view, boolean hasFocus) {
+    override fun onFocusChange(view: View, hasFocus: Boolean) {
         if (hasFocus) {
-            if (view instanceof EmojiconEditText) {
-                emojiconEditText = (EmojiconEditText) view;
+            if (view is EmojiconEditText) {
+                emojiconEditText = view
             }
         }
     }
 
-    private void refresh() {
-        popup.updateUseSystemDefault(useSystemEmoji);
+    private fun refresh() {
+        popup?.updateUseSystemDefault(useSystemEmoji)
     }
 
-    private void initEmojiButtonListener() {
+    private fun initEmojiButtonListener() {
         if (emojiButton != null) {
-            emojiButton.setOnClickListener(v -> togglePopupVisibility());
+            emojiButton?.setOnClickListener { v: View? -> togglePopupVisibility() }
         }
-        onViewClick.setOnClickListener(v -> togglePopupVisibility());
+        onViewClick.setOnClickListener { v: View? -> togglePopupVisibility() }
     }
 
-    private void togglePopupVisibility() {
-        if (popup != null && !popup.isShowing()) {
-            showPopup();
+    private fun togglePopupVisibility() {
+        if (popup != null && !popup!!.isShowing) {
+            showPopup()
         } else {
-            hidePopup();
+            hidePopup()
         }
     }
 
-    private void changeEmojiKeyboardIcon(ImageView iconToBeChanged, int drawableResourceId) {
-        if (iconToBeChanged != null) {
-            iconToBeChanged.setImageResource(drawableResourceId);
-        }
+    private fun changeEmojiKeyboardIcon(iconToBeChanged: ImageView?, drawableResourceId: Int) {
+        iconToBeChanged?.setImageResource(drawableResourceId)
     }
 
-    public void initListeners() {
+    fun initListeners() {
         if (emojiconEditText == null) {
-            emojiconEditText = emojiconEditTextList.get(0);
+            emojiconEditText = emojiconEditTextList[0]
         }
         //Will automatically set size according to the soft keyboard size
-        popup.setSizeForSoftKeyboard();
+        popup?.setSizeForSoftKeyboard()
 
         //If the emoji popup is dismissed, change emojiButton to smiley icon
-        popup.setOnDismissListener(() -> changeEmojiKeyboardIcon(emojiButton, SmileyIcons));
+        popup?.setOnDismissListener { changeEmojiKeyboardIcon(emojiButton, SmileyIcons) }
 
         //If the text keyboard closes, also dismiss the emoji popup
-        popup.setOnSoftKeyboardOpenCloseListener(new EmojiconsPopup.OnSoftKeyboardOpenCloseListener() {
-            @Override
-            public void onKeyboardOpen(int keyBoardHeight) {
+        popup?.setOnSoftKeyboardOpenCloseListener(object : OnSoftKeyboardOpenCloseListener {
+            override fun onKeyboardOpen(keyBoardHeight: Int) {
                 if (keyboardListener != null) {
-                    keyboardListener.onKeyboardOpen();
+                    keyboardListener!!.onKeyboardOpen()
                 }
             }
 
-            @Override
-            public void onKeyboardClose() {
+            override fun onKeyboardClose() {
                 if (keyboardListener != null) {
-                    keyboardListener.onKeyboardClose();
+                    keyboardListener!!.onKeyboardClose()
                 }
-                if (popup != null && popup.isShowing()) {
-                    popup.dismiss();
+                if (popup != null && popup!!.isShowing) {
+                    popup!!.dismiss()
                 }
             }
-        });
+        })
 
         //On emoji clicked, add it to edittext
-        popup.setOnEmojiconClickedListener(emojicon -> {
+        popup?.setOnEmojiconClickedListener { emojicon: Emojicon? ->
             if (emojicon == null) {
-                return;
+                return@setOnEmojiconClickedListener
             }
-            int start = emojiconEditText.getSelectionStart();
-            int end = emojiconEditText.getSelectionEnd();
+            val start = emojiconEditText!!.selectionStart
+            val end = emojiconEditText!!.selectionEnd
             if (start < 0) {
-                emojiconEditText.append(emojicon.getEmoji());
+                emojiconEditText!!.append(emojicon.emoji)
             } else {
-                Editable editableText = emojiconEditText.getText();
-                if (editableText != null) {
-                    editableText.replace(
-                            Math.min(start, end),
-                            Math.max(start, end),
-                            emojicon.getEmoji(),
-                            0,
-                            emojicon.getEmoji().length());
-                }
+                val editableText = emojiconEditText!!.text
+                editableText?.replace(
+                    Math.min(start, end),
+                    Math.max(start, end),
+                    emojicon.emoji,
+                    0,
+                    emojicon.emoji.length
+                )
             }
-        });
+        }
 
         //On backspace clicked, emulate the KEYCODE_DEL key event
-        popup.setOnEmojiconBackspaceClickedListener(v -> {
-            KeyEvent event = new KeyEvent(0, 0, 0, KeyEvent.KEYCODE_DEL, 0, 0, 0, 0, KeyEvent.KEYCODE_ENDCALL);
-            emojiconEditText.dispatchKeyEvent(event);
-        });
+        popup?.setOnEmojiconBackspaceClickedListener { v: View? ->
+            val event =
+                KeyEvent(0, 0, 0, KeyEvent.KEYCODE_DEL, 0, 0, 0, 0, KeyEvent.KEYCODE_ENDCALL)
+            emojiconEditText!!.dispatchKeyEvent(event)
+        }
 
-        popup.setOnStickerClickedListener((url, type) -> {
-            stickerOnClickListener.onClick(url, type);
-        });
+        popup?.setOnStickerClickedListener(object : OnStickerClick {
+            override fun onStickerClicked(url: String?, type: String) {
+                stickerOnClickListener.onClick(url, type)
+            }
+
+        })
 
 
         // To toggle between text keyboard and emoji keyboard keyboard(Popup)
-        initEmojiButtonListener();
+        initEmojiButtonListener()
     }
 
-    public void addEmojiconEditTextList(EmojiconEditText... emojiconEditText) {
-        Collections.addAll(emojiconEditTextList, emojiconEditText);
-        for (EmojiconEditText editText : emojiconEditText) {
-            editText.setOnFocusChangeListener(this);
+    fun addEmojiconEditTextList(vararg emojiconEditText: EmojiconEditText) {
+        Collections.addAll(emojiconEditTextList, *emojiconEditText)
+        for (editText in emojiconEditText) {
+            editText.onFocusChangeListener = this
         }
-    }
-
-    public EmojiconsPopup getPopup() {
-        return popup;
     }
 
     /**
      * @param emojiButton The Id of ImageButton used to open Emoji
      */
-    public void setEmojiButton(ImageView emojiButton) {
-        this.emojiButton = emojiButton;
-        initEmojiButtonListener();
+    fun setEmojiButton(emojiButton: ImageView?) {
+        this.emojiButton = emojiButton
+        initEmojiButtonListener()
     }
 
     /**
@@ -236,76 +225,78 @@ public class EmojIconActions implements View.OnFocusChangeListener,
      * @param tabsColor        The color of tabs background
      * @param backgroundColor  The color of emoji background
      */
-    public void setColors(int iconPressedColor, int tabsColor, int backgroundColor) {
-        this.popup.setColors(iconPressedColor, tabsColor, backgroundColor);
+    fun setColors(iconPressedColor: Int, tabsColor: Int, backgroundColor: Int) {
+        popup?.setColors(iconPressedColor, tabsColor, backgroundColor)
     }
 
-    public void setIconsIds(int keyboardIcon, int smileyIcon) {
-        this.KeyBoardIcon = keyboardIcon;
-        this.SmileyIcons = smileyIcon;
+    fun setIconsIds(keyboardIcon: Int, smileyIcon: Int) {
+        KeyBoardIcon = keyboardIcon
+        SmileyIcons = smileyIcon
     }
 
-//    public void setUseSystemEmoji(boolean useSystemEmoji) {
-//        this.useSystemEmoji = useSystemEmoji;
-//        for (EmojiconEditText editText : emojiconEditTextList) {
-//            editText.setUseSystemDefault(useSystemEmoji);
-//        }
-//        refresh();
-//    }
-
-    public void showPopup() {
+    //    public void setUseSystemEmoji(boolean useSystemEmoji) {
+    //        this.useSystemEmoji = useSystemEmoji;
+    //        for (EmojiconEditText editText : emojiconEditTextList) {
+    //            editText.setUseSystemDefault(useSystemEmoji);
+    //        }
+    //        refresh();
+    //    }
+    fun showPopup() {
         if (emojiconEditText == null) {
-            emojiconEditText = emojiconEditTextList.get(0);
+            emojiconEditText = emojiconEditTextList[0]
         }
-        if (popup.isKeyBoardOpen()) {
-            popup.showAtBottom();
+        if (popup!!.isKeyBoardOpen) {
+            popup!!.showAtBottom()
         } else {
-            emojiconEditText.setFocusableInTouchMode(true);
-            emojiconEditText.requestFocus();
-            final InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-            if (inputMethodManager != null) {
-                inputMethodManager.showSoftInput(emojiconEditText, InputMethodManager.SHOW_IMPLICIT);
+            emojiconEditText!!.isFocusableInTouchMode = true
+            emojiconEditText!!.requestFocus()
+            val inputMethodManager =
+                context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            inputMethodManager.showSoftInput(
+                emojiconEditText,
+                InputMethodManager.SHOW_IMPLICIT
+            )
+            popup!!.showAtBottomPending()
+        }
+        changeEmojiKeyboardIcon(emojiButton, KeyBoardIcon)
+    }
+
+    fun hidePopup() {
+        if (popup != null && popup!!.isShowing) {
+            popup!!.dismiss()
+        }
+    }
+
+    override fun onSearchClicked() {
+        stickerOnClickListener.onSearchClick()
+    }
+
+    private fun jsonToPojo(json: String): ArrayList<StickerData>? {
+        val gson = Gson()
+        val data = gson.fromJson(json, StickerModel::class.java)
+        if (data != null) {
+            data.data?.let { stickerData?.addAll(it) }
+            stickerData?.map {
+                it.imageHeader = data.meta?.imagePath + 200 + it.imageHeader
+                it.sticker?.map { it1 ->
+                    it1.url = data.meta?.imagePath + 200 + it1.url
+                }
             }
-            popup.showAtBottomPending();
         }
-        changeEmojiKeyboardIcon(emojiButton, KeyBoardIcon);
+        return stickerData
     }
 
-    public void hidePopup() {
-        if (popup != null && popup.isShowing()) {
-            popup.dismiss();
-        }
+    interface StickerOnClickListener {
+        fun onClick(url: String?, type: String?)
+        fun onSearchClick()
     }
 
-    @Override
-    public void onSearchClicked() {
-        stickerOnClickListener.onSearchClick();
+    interface KeyboardListener {
+        fun onKeyboardOpen()
+        fun onKeyboardClose()
     }
 
-    private ArrayList<StickerData> jsonToPojo(String json){
-        Gson gson = new Gson();
-        StickerModel a = gson.fromJson(json, StickerModel.class);
-        if (a.getData()!=null){
-            stickerData.addAll(a.getData());
-        }
-        return stickerData;
+    fun setKeyboardListener(listener: KeyboardListener?) {
+        keyboardListener = listener
     }
-
-
-    public interface StickerOnClickListener {
-        void onClick(String url, String type);
-
-        void onSearchClick();
-    }
-
-    public interface KeyboardListener {
-        void onKeyboardOpen();
-
-        void onKeyboardClose();
-    }
-
-    public void setKeyboardListener(KeyboardListener listener) {
-        this.keyboardListener = listener;
-    }
-
 }
