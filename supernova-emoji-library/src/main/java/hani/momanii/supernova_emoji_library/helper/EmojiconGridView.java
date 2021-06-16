@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package hani.momanii.supernova_emoji_library.Helper;
+package hani.momanii.supernova_emoji_library.helper;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -47,15 +47,12 @@ public class EmojiconGridView{
             mData = emojicons.clone();
         }
         EmojiAdapter mAdapter = new EmojiAdapter(rootView.getContext(), mData ,useSystemDefault);
-        mAdapter.setEmojiClickListener(new OnEmojiconClickedListener() {
-            @Override
-            public void onEmojiconClicked(Emojicon emojicon) {
-                if (mEmojiconPopup.onEmojiconClickedListener != null) {
-                    mEmojiconPopup.onEmojiconClickedListener.onEmojiconClicked(emojicon);
-                }
-                if (mRecents != null) {
-                    mRecents.addRecentEmoji(rootView.getContext(), emojicon);
-                }
+        mAdapter.setEmojiClickListener(emojicon -> {
+            if (mEmojiconPopup.onEmojiconClickedListener != null) {
+                mEmojiconPopup.onEmojiconClickedListener.onEmojiconClicked(emojicon);
+            }
+            if (mRecents != null) {
+                mRecents.addRecentEmoji(rootView.getContext(), emojicon);
             }
         });
         gridView.setAdapter(mAdapter);

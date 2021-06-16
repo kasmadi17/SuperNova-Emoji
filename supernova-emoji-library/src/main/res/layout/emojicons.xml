@@ -15,118 +15,32 @@
   -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <LinearLayout
-        android:id="@+id/emojis_tab"
-        android:layout_width="match_parent"
-        android:layout_height="50dip"
-        android:layout_alignParentTop="true"
-        android:orientation="horizontal">
-
-        <ImageButton
-            android:id="@+id/emojis_tab_0_recents"
-            android:layout_width="0dip"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@null"
-            android:contentDescription="@string/content_description"
-            android:scaleType="center"
-            android:src="@drawable/selector_emoji_recent" />
-
-        <ImageButton
-            android:id="@+id/emojis_tab_1_people"
-            android:layout_width="0dip"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@null"
-            android:contentDescription="@string/content_description"
-            android:scaleType="center"
-            android:src="@drawable/selector_emoji_people" />
-
-        <ImageButton
-            android:id="@+id/emojis_tab_2_nature"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:layout_width="0dip"
-            android:background="@null"
-            android:contentDescription="@string/content_description"
-            android:scaleType="center"
-            android:src="@drawable/selector_emoji_nature" />
-
-        <ImageButton
-            android:id="@+id/emojis_tab_3_food"
-            android:layout_width="0dip"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@null"
-            android:contentDescription="@string/content_description"
-            android:scaleType="center"
-            android:src="@drawable/selector_emoji_food" />
-
-        <ImageButton
-            android:id="@+id/emojis_tab_4_sport"
-            android:layout_width="0dip"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@null"
-            android:contentDescription="@string/content_description"
-            android:scaleType="center"
-            android:src="@drawable/selector_emoji_activity" />
-
-        <ImageButton
-            android:id="@+id/emojis_tab_5_cars"
-            android:layout_width="0dip"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@null"
-            android:contentDescription="@string/content_description"
-            android:scaleType="center"
-            android:src="@drawable/selector_emoji_travel" />
-
-        <ImageButton
-            android:id="@+id/emojis_tab_6_elec"
-            android:layout_width="0dip"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@null"
-            android:contentDescription="@string/content_description"
-            android:scaleType="center"
-            android:src="@drawable/selector_emoji_objects" />
-
-        <ImageButton
-            android:id="@+id/emojis_tab_7_sym"
-            android:layout_width="0dip"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@null"
-            android:contentDescription="@string/content_description"
-            android:scaleType="center"
-            android:src="@drawable/selector_emoji_symbols" />
-
-        <ImageButton
-            android:id="@+id/emojis_backspace"
-            android:layout_width="0dip"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@null"
-            android:contentDescription="@string/content_description"
-            android:src="@drawable/emoji_x" />
-    </LinearLayout>
+    android:layout_height="match_parent"
+    android:background="#282828">
 
     <androidx.viewpager.widget.ViewPager
-        android:id="@+id/emojis_pager"
+        android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/emojis_tab"
-        android:layout_alignParentBottom="true"
-        android:background="#ffffff" />
+        android:layout_above="@id/tabLayout"/>
 
-    <View
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
         android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:layout_below="@id/emojis_tab"
-        android:background="#ffffff" />
+        android:layout_height="wrap_content"
+        app:tabMode="auto"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"/>
+
+    <ImageView
+        android:id="@+id/imgSearch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="8dp"
+        app:srcCompat="@drawable/ic_baseline_search_24"/>
 
 </RelativeLayout>

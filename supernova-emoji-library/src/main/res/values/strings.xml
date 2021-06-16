@@ -3,4 +3,7 @@
     <string name="content_description">ContentDescription</string>
     <string name="text_use_system_default">Use System Default?</string>
     <string name="text_hello_emoji">Hello Emojis !</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="sticker_not_found">Sticker not found</string>
 </resources>

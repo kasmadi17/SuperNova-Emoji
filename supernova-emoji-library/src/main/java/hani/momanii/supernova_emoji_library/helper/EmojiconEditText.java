@@ -14,34 +14,40 @@
  * limitations under the License.
  */
 
-package hani.momanii.supernova_emoji_library.Helper;
+package hani.momanii.supernova_emoji_library.helper;
 
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.text.style.DynamicDrawableSpan;
 import android.util.AttributeSet;
-import android.widget.MultiAutoCompleteTextView;
+
+import androidx.appcompat.widget.AppCompatEditText;
 
 import hani.momanii.supernova_emoji_library.R;
 
-public class EmojiconMultiAutoCompleteTextView extends MultiAutoCompleteTextView {
+/**
+ * @author Hieu Rocker (rockerhieu@gmail.com).
+ * @author Hani Al Momani (hani.momanii@gmail.com)
+ * @author Damai Subimawanto (damai.subimawanto@gmail.com)
+ */
+public class EmojiconEditText extends AppCompatEditText {
     private int mEmojiconSize;
     private int mEmojiconAlignment;
     private int mEmojiconTextSize;
     private boolean mUseSystemDefault = false;
 
-    public EmojiconMultiAutoCompleteTextView(Context context) {
+    public EmojiconEditText(Context context) {
         super(context);
         mEmojiconSize = (int) getTextSize();
         mEmojiconTextSize = (int) getTextSize();
     }
 
-    public EmojiconMultiAutoCompleteTextView(Context context, AttributeSet attrs) {
+    public EmojiconEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(attrs);
     }
 
-    public EmojiconMultiAutoCompleteTextView(Context context, AttributeSet attrs, int defStyle) {
+    public EmojiconEditText(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init(attrs);
     }

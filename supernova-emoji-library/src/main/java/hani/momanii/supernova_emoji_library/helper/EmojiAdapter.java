@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package hani.momanii.supernova_emoji_library.Helper;
+package hani.momanii.supernova_emoji_library.helper;
 
 import android.content.Context;
 import android.view.View;
@@ -66,12 +66,7 @@ class EmojiAdapter extends ArrayAdapter<Emojicon> {
         if (emoji != null) {
             holder.icon.setText(emoji.getEmoji());
         }
-        holder.icon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                emojiClickListener.onEmojiconClicked(getItem(position));
-            }
-        });
+        holder.icon.setOnClickListener(v1 -> emojiClickListener.onEmojiconClicked(getItem(position)));
 
         return v;
     }

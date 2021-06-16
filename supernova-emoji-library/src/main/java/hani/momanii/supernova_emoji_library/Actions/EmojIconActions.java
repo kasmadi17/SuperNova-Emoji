@@ -21,22 +21,28 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
-import android.widget.PopupWindow;
+
+import androidx.fragment.app.FragmentManager;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
-import hani.momanii.supernova_emoji_library.Helper.EmojiconGridView;
-import hani.momanii.supernova_emoji_library.Helper.EmojiconsPopup;
 import hani.momanii.supernova_emoji_library.R;
-import hani.momanii.supernova_emoji_library.emoji.Emojicon;
+import hani.momanii.supernova_emoji_library.gif.SearchGifFragment;
+import hani.momanii.supernova_emoji_library.helper.EmojiconEditText;
+import hani.momanii.supernova_emoji_library.helper.EmojiconsPopup;
+import hani.momanii.supernova_emoji_library.sticker.StickerData;
+import hani.momanii.supernova_emoji_library.sticker.StickerView;
 
 /**
  * @author Hani Al Momani (hani.momanii@gmail.com)
  */
-public class EmojIconActions implements View.OnFocusChangeListener {
+public class EmojIconActions implements View.OnFocusChangeListener,
+        EmojiconsPopup.OnSearchClicked{
     private boolean useSystemEmoji = false;
     private EmojiconsPopup popup;
     private Context context;
@@ -48,6 +54,9 @@ public class EmojIconActions implements View.OnFocusChangeListener {
     private KeyboardListener keyboardListener;
     private List<EmojiconEditText> emojiconEditTextList = new ArrayList<>();
     private EmojiconEditText emojiconEditText;
+    private ArrayList<StickerData> stickerData;
+    public StickerOnClickListener stickerOnClickListener;
+    private FragmentManager fragmentManager;
 
     /**
      * Constructor
@@ -63,12 +72,18 @@ public class EmojIconActions implements View.OnFocusChangeListener {
                            View rootView,
                            EmojiconEditText emojiconEditText,
                            ImageView emojiButton,
-                           View viewOnClick) {
+                           ArrayList<StickerData> stickerData,
+                           View viewOnClick,
+                           StickerOnClickListener stickerOnClickListener,
+                           FragmentManager fragmentManager) {
         this.emojiButton = emojiButton;
+        this.stickerData = stickerData;
         this.context = ctx;
         this.rootView = rootView;
+        this.stickerOnClickListener = stickerOnClickListener;
+        this.fragmentManager = fragmentManager;
         addEmojiconEditTextList(emojiconEditText);
-        this.popup = new EmojiconsPopup(rootView, ctx, useSystemEmoji);
+        this.popup = new EmojiconsPopup(rootView, ctx, stickerData, useSystemEmoji, this);
         this.onViewClick = viewOnClick;
         initListeners();
     }
@@ -85,12 +100,17 @@ public class EmojIconActions implements View.OnFocusChangeListener {
     public EmojIconActions(Context ctx,
                            View rootView,
                            EmojiconEditText emojiconEditText,
-                           View viewOnClick) {
+                           ArrayList<StickerData> stickerData,
+                           View viewOnClick,
+                           StickerOnClickListener stickerOnClickListener,
+                           FragmentManager fragmentManager) {
         addEmojiconEditTextList(emojiconEditText);
         this.context = ctx;
         this.rootView = rootView;
-        this.popup = new EmojiconsPopup(rootView, ctx, useSystemEmoji);
+        this.popup = new EmojiconsPopup(rootView, ctx, stickerData, useSystemEmoji, this);
         this.onViewClick = viewOnClick;
+        this.stickerOnClickListener = stickerOnClickListener;
+        this.fragmentManager = fragmentManager;
         initListeners();
     }
 
@@ -109,19 +129,9 @@ public class EmojIconActions implements View.OnFocusChangeListener {
 
     private void initEmojiButtonListener() {
         if (emojiButton != null) {
-            emojiButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    togglePopupVisibility();
-                }
-            });
+            emojiButton.setOnClickListener(v -> togglePopupVisibility());
         }
-        onViewClick.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                togglePopupVisibility();
-            }
-        });
+        onViewClick.setOnClickListener(v -> togglePopupVisibility());
     }
 
     private void togglePopupVisibility() {
@@ -146,12 +156,7 @@ public class EmojIconActions implements View.OnFocusChangeListener {
         popup.setSizeForSoftKeyboard();
 
         //If the emoji popup is dismissed, change emojiButton to smiley icon
-        popup.setOnDismissListener(new PopupWindow.OnDismissListener() {
-            @Override
-            public void onDismiss() {
-                changeEmojiKeyboardIcon(emojiButton, SmileyIcons);
-            }
-        });
+        popup.setOnDismissListener(() -> changeEmojiKeyboardIcon(emojiButton, SmileyIcons));
 
         //If the text keyboard closes, also dismiss the emoji popup
         popup.setOnSoftKeyboardOpenCloseListener(new EmojiconsPopup.OnSoftKeyboardOpenCloseListener() {
@@ -174,38 +179,37 @@ public class EmojIconActions implements View.OnFocusChangeListener {
         });
 
         //On emoji clicked, add it to edittext
-        popup.setOnEmojiconClickedListener(new EmojiconGridView.OnEmojiconClickedListener() {
-            @Override
-            public void onEmojiconClicked(Emojicon emojicon) {
-                if (emojicon == null) {
-                    return;
-                }
-                int start = emojiconEditText.getSelectionStart();
-                int end = emojiconEditText.getSelectionEnd();
-                if (start < 0) {
-                    emojiconEditText.append(emojicon.getEmoji());
-                } else {
-                    Editable editableText = emojiconEditText.getText();
-                    if (editableText != null) {
-                        editableText.replace(
-                                Math.min(start, end),
-                                Math.max(start, end),
-                                emojicon.getEmoji(),
-                                0,
-                                emojicon.getEmoji().length());
-                    }
+        popup.setOnEmojiconClickedListener(emojicon -> {
+            if (emojicon == null) {
+                return;
+            }
+            int start = emojiconEditText.getSelectionStart();
+            int end = emojiconEditText.getSelectionEnd();
+            if (start < 0) {
+                emojiconEditText.append(emojicon.getEmoji());
+            } else {
+                Editable editableText = emojiconEditText.getText();
+                if (editableText != null) {
+                    editableText.replace(
+                            Math.min(start, end),
+                            Math.max(start, end),
+                            emojicon.getEmoji(),
+                            0,
+                            emojicon.getEmoji().length());
                 }
             }
         });
 
         //On backspace clicked, emulate the KEYCODE_DEL key event
-        popup.setOnEmojiconBackspaceClickedListener(new EmojiconsPopup.OnEmojiconBackspaceClickedListener() {
-            @Override
-            public void onEmojiconBackspaceClicked(View v) {
-                KeyEvent event = new KeyEvent(0, 0, 0, KeyEvent.KEYCODE_DEL, 0, 0, 0, 0, KeyEvent.KEYCODE_ENDCALL);
-                emojiconEditText.dispatchKeyEvent(event);
-            }
+        popup.setOnEmojiconBackspaceClickedListener(v -> {
+            KeyEvent event = new KeyEvent(0, 0, 0, KeyEvent.KEYCODE_DEL, 0, 0, 0, 0, KeyEvent.KEYCODE_ENDCALL);
+            emojiconEditText.dispatchKeyEvent(event);
         });
+
+        popup.setOnStickerClickedListener((url, type) -> {
+            stickerOnClickListener.onClick(url, type);
+        });
+
 
         // To toggle between text keyboard and emoji keyboard keyboard(Popup)
         initEmojiButtonListener();
@@ -244,13 +248,13 @@ public class EmojIconActions implements View.OnFocusChangeListener {
         this.SmileyIcons = smileyIcon;
     }
 
-    public void setUseSystemEmoji(boolean useSystemEmoji) {
-        this.useSystemEmoji = useSystemEmoji;
-        for (EmojiconEditText editText : emojiconEditTextList) {
-            editText.setUseSystemDefault(useSystemEmoji);
-        }
-        refresh();
-    }
+//    public void setUseSystemEmoji(boolean useSystemEmoji) {
+//        this.useSystemEmoji = useSystemEmoji;
+//        for (EmojiconEditText editText : emojiconEditTextList) {
+//            editText.setUseSystemDefault(useSystemEmoji);
+//        }
+//        refresh();
+//    }
 
     public void showPopup() {
         if (emojiconEditText == null) {
@@ -276,12 +280,26 @@ public class EmojIconActions implements View.OnFocusChangeListener {
         }
     }
 
+    @Override
+    public void onSearchClicked() {
+        stickerOnClickListener.onSearchClick();
+    }
+
+
+    public interface StickerOnClickListener {
+        void onClick(String url, String type);
+
+        void onSearchClick();
+    }
+
     public interface KeyboardListener {
         void onKeyboardOpen();
+
         void onKeyboardClose();
     }
 
     public void setKeyboardListener(KeyboardListener listener) {
         this.keyboardListener = listener;
     }
+
 }
