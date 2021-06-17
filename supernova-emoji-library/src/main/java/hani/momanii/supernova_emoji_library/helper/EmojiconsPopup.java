@@ -262,6 +262,8 @@ public class EmojiconsPopup extends PopupWindow {
         MainPagerAdapter adapter = new MainPagerAdapter(fragment);
         ViewPager viewPager = view.findViewById(R.id.viewPager);
         TabLayout tabs = view.findViewById(R.id.tabLayout);
+        ImageView imgSearch = view.findViewById(R.id.imgSearch);
+        imgSearch.setVisibility(View.GONE);
         viewPager.setAdapter(adapter);
 
         tabs.setupWithViewPager(viewPager);
@@ -274,6 +276,11 @@ public class EmojiconsPopup extends PopupWindow {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 tab.getIcon().setColorFilter(Color.parseColor("#ffffff"), PorterDuff.Mode.SRC_IN);
+                if (tab.getPosition() == 2){
+                    imgSearch.setVisibility(View.VISIBLE);
+                }else{
+                    imgSearch.setVisibility(View.GONE);
+                }
                 Log.i("TAG", "onTabSelected: "+tab.getPosition());
             }
 
@@ -289,9 +296,8 @@ public class EmojiconsPopup extends PopupWindow {
         });
         tabs.getTabAt(0).select();
 
-        ImageView imgSearch = view.findViewById(R.id.imgSearch);
         imgSearch.setOnClickListener(view -> {
-           onSearchClicked.onSearchClicked();
+            onSearchClicked.onSearchClicked();
         });
 
 

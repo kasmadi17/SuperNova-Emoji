@@ -12,6 +12,9 @@
         android:layout_height="wrap_content"
         android:text="@string/sticker_not_found"
         android:layout_gravity="center"
+        android:textColor="#ffffff"
+        android:gravity="center_vertical"
+        android:layout_margin="20dp"
         android:visibility="gone"/>
 
     <com.google.android.material.tabs.TabLayout

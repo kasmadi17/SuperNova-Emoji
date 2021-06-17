@@ -30,6 +30,7 @@ class StickerView(
     private var tabHeader: TabLayout? = null
     private var data: ArrayList<StickerData>? = arrayListOf()
     var rootView: View? = null
+    private var tvNotFound:TextView?=null
 
     init {
         onCreateView()
@@ -40,10 +41,12 @@ class StickerView(
         rootView = LayoutInflater.from(context).inflate(R.layout.fragment_sticker, null, false)
         rvListSticker = rootView?.findViewById(R.id.rvListSticker)
         tabHeader = rootView?.findViewById(R.id.tabHeaderSticker)
-        val tvNotFound = rootView?.findViewById<TextView>(R.id.tvNotFound)
-
+        tvNotFound = rootView?.findViewById(R.id.tvNotFound)
+        data = arrayListOf()
+        data?.clear()
+        data = stickerData
         val layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.HORIZONTAL)
-        if (data != null) {
+        if (data != null && data!!.isNotEmpty()) {
             setUpTabLayout()
             adapter = StickerAdapter {
                 popUp.onStickerClick.onStickerClicked(it.url, "sticker")
@@ -51,7 +54,7 @@ class StickerView(
             }
             rvListSticker?.layoutManager = layoutManager
             rvListSticker?.adapter = adapter
-            adapter.setData(stickerData?.get(0)?.sticker!!)
+            adapter.setData(data?.get(0)?.sticker!!)
             tvNotFound?.visibility = View.GONE
         } else {
             tvNotFound?.visibility = View.VISIBLE
@@ -61,17 +64,17 @@ class StickerView(
     }
 
     private fun setUpTabLayout() {
-        for (i in stickerData!!) {
+        for (i in data!!) {
             tabHeader?.addTab(tabHeader!!.newTab())
         }
 
         for (i in 0 until tabHeader!!.tabCount) {
-            setTabLayout(i, stickerData[i].imageHeader)
+            setTabLayout(i, data?.get(i)?.imageHeader)
         }
 
         tabHeader?.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
-                stickerData[tab?.position ?: 0].sticker?.let { adapter.setData(it) }
+                data?.get(tab?.position ?: 0)?.sticker?.let { adapter.setData(it) }
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
@@ -91,8 +94,23 @@ class StickerView(
     }
 
     fun setData(stickerData: ArrayList<StickerData>) {
+        data = arrayListOf()
+        data?.clear()
         data = stickerData
-        adapter.notifyDataSetChanged()
+        val layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.HORIZONTAL)
+        if (data != null && data!!.isNotEmpty()) {
+            setUpTabLayout()
+            adapter = StickerAdapter {
+                popUp.onStickerClick.onStickerClicked(it.url, "sticker")
+
+            }
+            rvListSticker?.layoutManager = layoutManager
+            rvListSticker?.adapter = adapter
+            adapter.setData(data?.get(0)?.sticker!!)
+            tvNotFound?.visibility = View.GONE
+        } else {
+            tvNotFound?.visibility = View.VISIBLE
+        }
     }
 
     interface OnStickerClick {
