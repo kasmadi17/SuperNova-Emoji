@@ -75,6 +75,8 @@ public class EmojiconsPopup extends PopupWindow {
     int backgroundColor = Color.parseColor("#E6EBEF");
     Integer systemNavigationBarHeight = null;
     EmojiView emojiFragment;
+    View[] fragment = new View[3];
+    StickerView stickerView;
 
     private ViewPager emojisPager;
     private ArrayList<StickerData> stickerData;
@@ -252,10 +254,10 @@ public class EmojiconsPopup extends PopupWindow {
 
     private View createCustomView() {
         view = LayoutInflater.from(mContext).inflate(R.layout.emojicons, null, false);
-        View[] fragment = new View[3];
         EmojiView emojiFragment = new EmojiView(mContext, this);
+        stickerView = new StickerView(mContext, stickerData, this);
         fragment[0] = emojiFragment.getRootView();
-        fragment[1] = new StickerView(mContext, stickerData, this).getRootView();
+        fragment[1] = stickerView.getRootView();
         fragment[2] = new GifView(mContext, this).getRootView();
         MainPagerAdapter adapter = new MainPagerAdapter(fragment);
         ViewPager viewPager = view.findViewById(R.id.viewPager);
@@ -327,6 +329,11 @@ public class EmojiconsPopup extends PopupWindow {
         this.backgroundColor = backgroundColor;
         this.iconPressedColor = iconPressedColor;
         this.tabsColor = tabsColor;
+    }
+
+    public void setData(ArrayList<StickerData> stickerData){
+        this.stickerData = stickerData;
+        stickerView.setData(stickerData);
     }
 
 

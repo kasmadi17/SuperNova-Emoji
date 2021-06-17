@@ -290,6 +290,10 @@ class EmojIconActions : View.OnFocusChangeListener, OnSearchClicked {
         return null
     }
 
+    fun setStickerData(data:String){
+        popup?.setData(jsonToPojo(data))
+    }
+
     interface StickerOnClickListener {
         fun onClick(url: String?, type: String?)
         fun onSearchClick()

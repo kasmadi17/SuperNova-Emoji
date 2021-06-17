@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.Glide
 import com.google.android.material.tabs.TabLayout
-import com.squareup.picasso.Picasso
 import hani.momanii.supernova_emoji_library.R
 import hani.momanii.supernova_emoji_library.helper.EmojiconsPopup
 
@@ -29,7 +28,7 @@ class StickerView(
     private lateinit var adapter: StickerAdapter
     private var rvListSticker: RecyclerView? = null
     private var tabHeader: TabLayout? = null
-
+    private var data: ArrayList<StickerData>? = arrayListOf()
     var rootView: View? = null
 
     init {
@@ -44,20 +43,18 @@ class StickerView(
         val tvNotFound = rootView?.findViewById<TextView>(R.id.tvNotFound)
 
         val layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.HORIZONTAL)
-        if (stickerData != null) {
-            if (stickerData.isNotEmpty()) {
-                setUpTabLayout()
-                adapter = StickerAdapter {
-                    popUp.onStickerClick.onStickerClicked(it.url, "sticker")
+        if (data != null) {
+            setUpTabLayout()
+            adapter = StickerAdapter {
+                popUp.onStickerClick.onStickerClicked(it.url, "sticker")
 
-                }
-                rvListSticker?.layoutManager = layoutManager
-                rvListSticker?.adapter = adapter
-                adapter.setData(stickerData[0].sticker!!)
-                tvNotFound?.visibility = View.GONE
-            } else {
-                tvNotFound?.visibility = View.VISIBLE
             }
+            rvListSticker?.layoutManager = layoutManager
+            rvListSticker?.adapter = adapter
+            adapter.setData(stickerData?.get(0)?.sticker!!)
+            tvNotFound?.visibility = View.GONE
+        } else {
+            tvNotFound?.visibility = View.VISIBLE
         }
 
         return rootView!!
@@ -88,8 +85,14 @@ class StickerView(
         val view =
             LayoutInflater.from(rootView?.context).inflate(R.layout.custom_tab_image_only, null)
         val tabIcon = view.findViewById<ImageView>(R.id.imgIcon)
-        Glide.with(context).load(image).override(64,64).error(R.drawable.emoji_people).into(tabIcon)
+        Glide.with(context).load(image).override(64, 64).error(R.drawable.emoji_people)
+            .into(tabIcon)
         tabHeader?.getTabAt(position)?.customView = view
+    }
+
+    fun setData(stickerData: ArrayList<StickerData>) {
+        data = stickerData
+        adapter.notifyDataSetChanged()
     }
 
     interface OnStickerClick {
