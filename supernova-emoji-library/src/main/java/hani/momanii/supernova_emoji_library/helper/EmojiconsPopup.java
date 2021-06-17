@@ -342,4 +342,5 @@ public class EmojiconsPopup extends PopupWindow {
         void onKeyboardOpen(int keyBoardHeight);
         void onKeyboardClose();
     }
+
 }

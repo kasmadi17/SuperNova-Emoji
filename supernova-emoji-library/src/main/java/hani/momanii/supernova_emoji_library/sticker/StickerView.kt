@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.bumptech.glide.Glide
 import com.google.android.material.tabs.TabLayout
 import com.squareup.picasso.Picasso
 import hani.momanii.supernova_emoji_library.R
@@ -87,7 +88,7 @@ class StickerView(
         val view =
             LayoutInflater.from(rootView?.context).inflate(R.layout.custom_tab_image_only, null)
         val tabIcon = view.findViewById<ImageView>(R.id.imgIcon)
-        Picasso.get().load(image).error(R.drawable.emoji_people).into(tabIcon)
+        Glide.with(context).load(image).override(64,64).error(R.drawable.emoji_people).into(tabIcon)
         tabHeader?.getTabAt(position)?.customView = view
     }
 

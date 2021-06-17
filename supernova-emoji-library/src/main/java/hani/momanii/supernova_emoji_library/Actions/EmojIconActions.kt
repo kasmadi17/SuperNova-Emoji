@@ -16,6 +16,7 @@
 package hani.momanii.supernova_emoji_library.Actions
 
 import android.content.Context
+import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -31,6 +32,7 @@ import hani.momanii.supernova_emoji_library.sticker.StickerData
 import hani.momanii.supernova_emoji_library.sticker.StickerModel
 import hani.momanii.supernova_emoji_library.sticker.StickerView.OnStickerClick
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * @author Hani Al Momani (hani.momanii@gmail.com)
@@ -48,7 +50,7 @@ class EmojIconActions : View.OnFocusChangeListener, OnSearchClicked {
     private var keyboardListener: KeyboardListener? = null
     private val emojiconEditTextList: MutableList<EmojiconEditText> = mutableListOf()
     private var emojiconEditText: EmojiconEditText? = null
-    private val stickerData: ArrayList<StickerData>? = null
+    private val stickerData: ArrayList<StickerData> = arrayListOf()
     var stickerOnClickListener: StickerOnClickListener
 
     /**
@@ -70,6 +72,7 @@ class EmojIconActions : View.OnFocusChangeListener, OnSearchClicked {
         stickerData: String,
         stickerOnClickListener: StickerOnClickListener
     ) {
+        jsonToPojo("")
         this.emojiButton = emojiButton
         context = ctx
         this.rootView = rootView
@@ -275,15 +278,16 @@ class EmojIconActions : View.OnFocusChangeListener, OnSearchClicked {
         val gson = Gson()
         val data = gson.fromJson(json, StickerModel::class.java)
         if (data != null) {
-            data.data?.let { stickerData?.addAll(it) }
-            stickerData?.map {
-                it.imageHeader = data.meta?.imagePath + 200 + it.imageHeader
+            data.data?.map {
+                it.imageHeader = data.meta?.imagePath + 354 + it.imageHeader
                 it.sticker?.map { it1 ->
-                    it1.url = data.meta?.imagePath + 200 + it1.url
+                    it1.url = data.meta?.imagePath + 354 + it1.url
                 }
             }
+            data.data?.let { stickerData.addAll(it) }
+            return stickerData
         }
-        return stickerData
+        return null
     }
 
     interface StickerOnClickListener {

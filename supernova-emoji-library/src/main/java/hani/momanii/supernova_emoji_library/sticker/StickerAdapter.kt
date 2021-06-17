@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.squareup.picasso.Picasso
 import hani.momanii.supernova_emoji_library.R
 
@@ -37,7 +38,7 @@ class StickerAdapter(val listener: (StickerItem) -> Unit) :
     inner class StickerViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val imgSticker: ImageView = itemView.findViewById(R.id.imgSticker)
         fun bind(data: StickerItem, listener: (StickerItem) -> Unit) {
-            Picasso.get().load(data.url).error(R.drawable.emoji_people).into(imgSticker)
+            Glide.with(itemView).load(data.url).override(354, 200).error(R.drawable.emoji_people).into(imgSticker)
             imgSticker.setOnClickListener {listener(data) }
         }
     }
