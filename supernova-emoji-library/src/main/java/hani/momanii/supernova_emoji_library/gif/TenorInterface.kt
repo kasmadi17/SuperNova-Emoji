@@ -22,6 +22,6 @@ interface TenorInterface {
     fun trendingGift(
         @Query("key") key: String = "SGLHRLYSEO8R",
         @Query("locale") locale: String = "id_ID",
-        @Query("limit") limit: Int = 5,
+        @Query("limit") limit: Int = 13,
     ): Call<Response>
 }

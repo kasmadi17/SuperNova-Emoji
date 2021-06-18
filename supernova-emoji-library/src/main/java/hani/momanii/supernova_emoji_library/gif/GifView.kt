@@ -8,14 +8,15 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import hani.momanii.supernova_emoji_library.helper.EmojiconsPopup
 import hani.momanii.supernova_emoji_library.R
+import retrofit2.Call
+import retrofit2.Callback
 
-class GifView(val context: Context, val popUp: EmojiconsPopup):GiftService.Callback {
+class GifView(val context: Context, val popUp: EmojiconsPopup){
     var rootView: View? = null
 
     private lateinit var adapter: GiftAdapter
     private var recycleView: RecyclerView? = null
     private var data:MutableList<MediaItem> = mutableListOf()
-    private lateinit var giftService: GiftService
 
     init {
         onCreateView()
@@ -28,21 +29,34 @@ class GifView(val context: Context, val popUp: EmojiconsPopup):GiftService.Callb
         adapter = GiftAdapter(data) {
             popUp.onStickerClick.onStickerClicked(it.tinygif?.url, "gif")
         }
-        giftService = GiftService("https://g.tenor.com/v1/trending?key=SGLHRLYSEO8R&limit=16&locale=id_ID",this)
-        giftService.getData
         val layoutManager = GridLayoutManager(context,3,GridLayoutManager.VERTICAL, false)
         recycleView?.layoutManager = layoutManager
         recycleView?.adapter = adapter
 
+        getTrending()
+
         return rootView
     }
 
-    override fun onSuccess(data: List<ResultsItem>?){
+    private fun getTrending() {
+        data.clear()
+        val client = Client()
+        val call = client.makeService().trendingGift()
+        call.enqueue(object : Callback<Response> {
+            override fun onResponse(call: Call<Response>, response: retrofit2.Response<Response>) {
+                if (response.isSuccessful) {
+                    val body = response.body()?.results
+                    for (i in 0 until body?.size!!) {
+                        body[i].media?.let { data.addAll(it) }
+                    }
+                    adapter.notifyDataSetChanged()
+                }
+            }
 
-        for (i in data!!.indices){
-            data[i].media?.let { this.data.addAll(it) }
-        }
+            override fun onFailure(call: Call<Response>, t: Throwable) {
+                Log.e("TAG", "onFailure: ${t.message}", t)
+            }
 
-        adapter.notifyDataSetChanged()
+        })
     }
 }
