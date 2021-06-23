@@ -87,7 +87,6 @@ open class SearchGifFragment : BottomSheetDialogFragment() {
             }
 
         })
-        get("excited")
 
         edtSearch?.isFocusableInTouchMode = true
         edtSearch?.requestFocus()
@@ -134,7 +133,7 @@ open class SearchGifFragment : BottomSheetDialogFragment() {
     private fun getTrending() {
         data.clear()
         val client = Client()
-        val call = client.makeService().trendingGift()
+        val call = client.makeService().trendingGift(limit = 3)
         call.enqueue(object : Callback<Response> {
             override fun onResponse(call: Call<Response>, response: retrofit2.Response<Response>) {
                 if (response.isSuccessful) {
