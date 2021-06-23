@@ -265,8 +265,7 @@ class EmojIconActions : View.OnFocusChangeListener, OnSearchClicked {
                 emojiconEditText,
                 InputMethodManager.SHOW_IMPLICIT
             )
-//            popup!!.showAtBottomPending()
-            popup?.showAtBottom()
+            popup!!.showAtBottomPending()
         }
         changeEmojiKeyboardIcon(emojiButton, KeyBoardIcon)
     }

@@ -158,6 +158,7 @@ public class EmojiconsPopup extends PopupWindow {
         } else {
             Log.i("EmojIconActions", "showAtBottomPending:keyboardNotOpen");
             pendingOpen = true;
+            setSizeForSoftKeyboard();
         }
     }
 
@@ -204,8 +205,8 @@ public class EmojiconsPopup extends PopupWindow {
                                 }
                             }
                             isOpened = true;
-                            showAtBottom();
                             if (pendingOpen) {
+                                showAtBottom();
                                 pendingOpen = false;
                             }
                         } else {
