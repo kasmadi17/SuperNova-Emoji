@@ -1,9 +1,11 @@
 package momanii.hani.supernova_emoji;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 
@@ -28,6 +30,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Button btn = findViewById(R.id.btnGotoActivity);
+        btn.setOnClickListener(view -> {
+            Intent intent = new Intent(this, MainActivity2.class);
+            startActivity(intent);
+        });
 
         rootView = findViewById(R.id.root_view);
         emojiButton = findViewById(R.id.emoji_btn);

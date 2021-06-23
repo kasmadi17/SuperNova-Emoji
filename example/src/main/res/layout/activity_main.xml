@@ -9,6 +9,12 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="momanii.hani.supernova_emoji.MainActivity">
 
+    <Button
+        android:id="@+id/btnGotoActivity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Test"/>
+
     <ImageView
         android:id="@+id/emoji_btn"
         android:layout_width="40dp"

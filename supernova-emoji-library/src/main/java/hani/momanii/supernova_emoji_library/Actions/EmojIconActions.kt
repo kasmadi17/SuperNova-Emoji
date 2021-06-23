@@ -32,15 +32,15 @@ import hani.momanii.supernova_emoji_library.sticker.StickerData
 import hani.momanii.supernova_emoji_library.sticker.StickerModel
 import hani.momanii.supernova_emoji_library.sticker.StickerView.OnStickerClick
 import java.util.*
-import kotlin.collections.ArrayList
 
 /**
  * @author Hani Al Momani (hani.momanii@gmail.com)
  */
 class EmojIconActions : View.OnFocusChangeListener, OnSearchClicked {
+    val TAG = "EmojIconActions"
     private val useSystemEmoji = false
-    var popup: EmojiconsPopup?
-        private set
+    var popup: EmojiconsPopup? = null
+
     private var context: Context
     private var rootView: View
     private var onViewClick: View
@@ -52,6 +52,7 @@ class EmojIconActions : View.OnFocusChangeListener, OnSearchClicked {
     private var emojiconEditText: EmojiconEditText? = null
     private val stickerData: ArrayList<StickerData> = arrayListOf()
     var stickerOnClickListener: StickerOnClickListener
+    private var sticker: String = ""
 
     /**
      * Constructor
@@ -72,13 +73,14 @@ class EmojIconActions : View.OnFocusChangeListener, OnSearchClicked {
         stickerData: String,
         stickerOnClickListener: StickerOnClickListener
     ) {
-        jsonToPojo("")
-        this.emojiButton = emojiButton
+        addEmojiconEditTextList(emojiconEditText!!)
         context = ctx
         this.rootView = rootView
+        this.sticker = stickerData
+        this.emojiButton = emojiButton
         this.stickerOnClickListener = stickerOnClickListener
-        addEmojiconEditTextList(emojiconEditText!!)
-        popup = EmojiconsPopup(rootView, ctx, jsonToPojo(stickerData), useSystemEmoji, this)
+        jsonToPojo(sticker)
+        popup = EmojiconsPopup(rootView, ctx, this.stickerData, useSystemEmoji, this)
         onViewClick = viewOnClick
         initListeners()
     }
@@ -103,9 +105,9 @@ class EmojIconActions : View.OnFocusChangeListener, OnSearchClicked {
         addEmojiconEditTextList(emojiconEditText!!)
         context = ctx
         this.rootView = rootView
+        this.stickerOnClickListener = stickerOnClickListener
         popup = EmojiconsPopup(rootView, ctx, jsonToPojo(stickerData), useSystemEmoji, this)
         onViewClick = viewOnClick
-        this.stickerOnClickListener = stickerOnClickListener
         initListeners()
     }
 
@@ -123,21 +125,25 @@ class EmojIconActions : View.OnFocusChangeListener, OnSearchClicked {
 
     private fun initEmojiButtonListener() {
         if (emojiButton != null) {
-            emojiButton?.setOnClickListener { v: View? -> togglePopupVisibility() }
+            emojiButton?.setOnClickListener { v: View? ->
+                togglePopupVisibility()
+            }
         }
         onViewClick.setOnClickListener { v: View? -> togglePopupVisibility() }
     }
 
     private fun togglePopupVisibility() {
         if (popup != null && !popup!!.isShowing) {
+            Log.i(TAG, "togglePopupVisibility: popUp showing")
             showPopup()
         } else {
+            Log.i(TAG, "togglePopupVisibility: popUp showing")
             hidePopup()
         }
     }
 
     private fun changeEmojiKeyboardIcon(iconToBeChanged: ImageView?, drawableResourceId: Int) {
-        iconToBeChanged?.setImageResource(drawableResourceId)
+        iconToBeChanged!!.setImageResource(drawableResourceId)
     }
 
     fun initListeners() {
@@ -249,10 +255,11 @@ class EmojIconActions : View.OnFocusChangeListener, OnSearchClicked {
             emojiconEditText = emojiconEditTextList[0]
         }
         if (popup!!.isKeyBoardOpen) {
-            popup!!.showAtBottom()
+            popup?.showAtBottom()
+            Log.i(TAG, "showAtBottom: ")
         } else {
-            emojiconEditText!!.isFocusableInTouchMode = true
-            emojiconEditText!!.requestFocus()
+            emojiconEditText?.isFocusableInTouchMode = true
+            emojiconEditText?.requestFocus()
             val inputMethodManager =
                 context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             inputMethodManager.showSoftInput(
@@ -260,6 +267,7 @@ class EmojIconActions : View.OnFocusChangeListener, OnSearchClicked {
                 InputMethodManager.SHOW_IMPLICIT
             )
             popup!!.showAtBottomPending()
+            Log.i(TAG, "showAtBottomPending: ")
         }
         changeEmojiKeyboardIcon(emojiButton, KeyBoardIcon)
     }
@@ -290,7 +298,7 @@ class EmojIconActions : View.OnFocusChangeListener, OnSearchClicked {
         return null
     }
 
-    fun setStickerData(data:String){
+    fun setStickerData(data: String) {
         popup?.setData(jsonToPojo(data))
     }
 

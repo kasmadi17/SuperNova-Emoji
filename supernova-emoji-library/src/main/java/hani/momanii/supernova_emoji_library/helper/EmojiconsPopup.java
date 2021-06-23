@@ -227,29 +227,28 @@ public class EmojiconsPopup extends PopupWindow {
     }
 
     public void updateUseSystemDefault(boolean mUseSystemDefault) {
-//        if (view != null) {
+        if (view != null) {
 //            mEmojisAdapter = null;
-//            positionPager = emojisPager.getCurrentItem();
-//            dismiss();
-//
-//            this.mUseSystemDefault = mUseSystemDefault;
-//            setContentView(createCustomView());
-//            //mEmojisAdapter.notifyDataSetChanged();
+            positionPager = emojisPager.getCurrentItem();
+            dismiss();
+            this.mUseSystemDefault = mUseSystemDefault;
+            setContentView(createCustomView());
+            //mEmojisAdapter.notifyDataSetChanged();
 //            mEmojiTabs[positionPager].setSelected(true);
 //            emojisPager.setCurrentItem(positionPager);
 //            onPageSelected(positionPager);
-//            if (!isShowing()) {
-//                if (isKeyBoardOpen()) {
-//                    // If keyboard is visible, simply show the emoji popup
-//                    showAtBottom();
-//                    // changeEmojiKeyboardIcon(emojiButton, R.drawable.ic_action_keyboard);
-//                } else {
-//                    // else, open the text keyboard first and immediately after that show the emoji popup
-//                    showAtBottomPending();
-//                    // changeEmojiKeyboardIcon(emojiButton, R.drawable.ic_action_keyboard);
-//                }
-//            }
-//        }
+            if (!isShowing()) {
+                if (isKeyBoardOpen()) {
+                    // If keyboard is visible, simply show the emoji popup
+                    showAtBottom();
+                    // changeEmojiKeyboardIcon(emojiButton, R.drawable.ic_action_keyboard);
+                } else {
+                    // else, open the text keyboard first and immediately after that show the emoji popup
+                    showAtBottomPending();
+                    // changeEmojiKeyboardIcon(emojiButton, R.drawable.ic_action_keyboard);
+                }
+            }
+        }
     }
 
     private View createCustomView() {

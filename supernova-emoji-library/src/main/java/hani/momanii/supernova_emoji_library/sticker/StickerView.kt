@@ -15,11 +15,6 @@ import hani.momanii.supernova_emoji_library.helper.EmojiconsPopup
 
 private const val ARG_STICKER = "ARG_STICKER"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [StickerView.newInstance] factory method to
- * create an instance of this fragment.
- */
 class StickerView(
     val context: Context,
     val stickerData: ArrayList<StickerData>?,
