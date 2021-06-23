@@ -204,8 +204,8 @@ public class EmojiconsPopup extends PopupWindow {
                                 }
                             }
                             isOpened = true;
+                            showAtBottom();
                             if (pendingOpen) {
-                                showAtBottom();
                                 pendingOpen = false;
                             }
                         } else {
