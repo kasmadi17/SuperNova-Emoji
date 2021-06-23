@@ -141,6 +141,7 @@ public class EmojiconsPopup extends PopupWindow {
      * If that is not possible see showAtBottomPending() function.
      */
     public void showAtBottom() {
+        Log.i("EmojIconActions", "showAtBottom: ");
         showAtLocation(rootView, Gravity.BOTTOM, 0, 0);
     }
 
@@ -153,7 +154,9 @@ public class EmojiconsPopup extends PopupWindow {
     public void showAtBottomPending() {
         if (isKeyBoardOpen()) {
             showAtBottom();
+            Log.i("EmojIconActions", "showAtBottomPending:isKeyBoardOpen");
         } else {
+            Log.i("EmojIconActions", "showAtBottomPending:keyboardNotOpen");
             pendingOpen = true;
         }
     }

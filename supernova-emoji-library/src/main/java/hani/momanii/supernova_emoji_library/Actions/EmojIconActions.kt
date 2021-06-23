@@ -134,16 +134,15 @@ class EmojIconActions : View.OnFocusChangeListener, OnSearchClicked {
 
     private fun togglePopupVisibility() {
         if (popup != null && !popup!!.isShowing) {
-            Log.i(TAG, "togglePopupVisibility: popUp showing")
             showPopup()
         } else {
-            Log.i(TAG, "togglePopupVisibility: popUp showing")
             hidePopup()
         }
     }
 
     private fun changeEmojiKeyboardIcon(iconToBeChanged: ImageView?, drawableResourceId: Int) {
-        iconToBeChanged!!.setImageResource(drawableResourceId)
+        iconToBeChanged?.setImageResource(drawableResourceId)
+        Log.i(TAG, "changeEmojiKeyboardIcon: ")
     }
 
     fun initListeners() {
@@ -251,12 +250,12 @@ class EmojIconActions : View.OnFocusChangeListener, OnSearchClicked {
     //        refresh();
     //    }
     fun showPopup() {
+        Log.i(TAG, "togglePopupVisibility: popUp showing")
         if (emojiconEditText == null) {
             emojiconEditText = emojiconEditTextList[0]
         }
         if (popup!!.isKeyBoardOpen) {
             popup?.showAtBottom()
-            Log.i(TAG, "showAtBottom: ")
         } else {
             emojiconEditText?.isFocusableInTouchMode = true
             emojiconEditText?.requestFocus()
@@ -267,13 +266,13 @@ class EmojIconActions : View.OnFocusChangeListener, OnSearchClicked {
                 InputMethodManager.SHOW_IMPLICIT
             )
             popup!!.showAtBottomPending()
-            Log.i(TAG, "showAtBottomPending: ")
         }
         changeEmojiKeyboardIcon(emojiButton, KeyBoardIcon)
     }
 
     fun hidePopup() {
         if (popup != null && popup!!.isShowing) {
+            Log.i(TAG, "togglePopupVisibility: popUp hide")
             popup!!.dismiss()
         }
     }
